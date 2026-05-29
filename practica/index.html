@@ -1,1 +1,1509 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practica · Nivel Uno</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--navy-light:#243558;--gold:#C9973A;--gold-light:#E8B85A;
+  --cream:#FAF8F3;--cream-dark:#F0EDE4;--text:#1B2A4A;--muted:#6B7A94;
+  --correct:#2E7D52;--correct-bg:#EAF5EE;--wrong:#B33A3A;--wrong-bg:#FAEAEA;
+  --new:#6B7A94;--learning:#C9973A;--familiar:#1B6BB5;--mastered:#2E7D52;
+  --grammar-accent:#5B3A8C;--grammar-light:#EDE8F7;
+  --r:12px;--rs:8px;
+}
+html,body{min-height:100vh;background:#E8E4DA;font-family:'DM Sans',sans-serif;color:var(--text)}
+.app{max-width:720px;margin:0 auto;min-height:100vh;background:#fff;box-shadow:0 0 60px rgba(0,0,0,.12)}
+
+/* HEADER */
+.header{background:var(--navy);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
+.header-left{display:flex;align-items:baseline;gap:10px}
+.h-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:#fff}
+.h-sub{font-size:11px;color:var(--gold-light);font-weight:300;letter-spacing:.08em;text-transform:uppercase}
+.h-nav{display:flex;gap:5px}
+.nav-btn{padding:5px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.nav-btn:hover,.nav-btn.active{background:var(--gold);border-color:var(--gold);color:#fff}
+
+/* MAIN */
+.main{padding:22px 24px 40px}
+.section-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:18px 0 9px}
+.section-label.grammar{color:var(--grammar-accent)}
+.intro h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;margin-bottom:6px}
+.intro p{font-size:13px;color:var(--muted);font-weight:300;line-height:1.6}
+.divider{height:.5px;background:var(--cream-dark);margin:20px 0}
+
+/* HOME STATS BAR */
+.stats-bar{background:var(--cream);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.stats-big{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);flex-shrink:0}
+.stats-sub{font-size:11px;color:var(--muted)}
+.mastery-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* SECTION HEADERS */
+.section-header{display:flex;align-items:center;gap:10px;margin:20px 0 10px}
+.section-header-line{flex:1;height:.5px;background:var(--cream-dark)}
+.section-header-title{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.section-header-title.vocab{color:var(--gold)}
+.section-header-title.grammar{color:var(--grammar-accent)}
+
+/* TOPIC / GRAMMAR CARDS */
+.topic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.topic-card{background:#fff;border:1px solid #E8E4DA;border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.topic-card:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.07)}
+.topic-card.grammar-card{border-color:#DDD8EE}
+.topic-card.grammar-card:hover{border-color:var(--grammar-accent)}
+.topic-icon{font-size:20px;margin-bottom:6px}
+.topic-name{font-size:12px;font-weight:500;color:var(--navy);line-height:1.3}
+.topic-count{font-size:11px;color:var(--muted);margin-top:2px}
+.topic-mastery{display:flex;gap:2px;margin-top:8px;flex-wrap:wrap}
+.mastery-pip{height:4px;flex:1;min-width:4px;border-radius:2px;background:var(--cream-dark)}
+.mastery-pip.new{background:var(--new)}
+.mastery-pip.learning{background:var(--learning)}
+.mastery-pip.familiar{background:var(--familiar)}
+.mastery-pip.mastered{background:var(--mastered)}
+.topic-badge{position:absolute;top:8px;right:8px;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:500}
+.badge-mastered{background:var(--correct-bg);color:var(--correct)}
+.badge-learning{background:#FDF8EF;color:var(--gold)}
+.badge-new{background:var(--cream-dark);color:var(--muted)}
+.badge-grammar{background:var(--grammar-light);color:var(--grammar-accent)}
+
+/* ACTIVITY SCREEN */
+.activity-header{background:var(--navy);padding:12px 24px;display:flex;align-items:center;gap:12px}
+.progress-track{flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:2px}
+.progress-fill{height:3px;background:var(--gold);border-radius:2px;transition:width .4s}
+.strip-info{font-size:11px;color:rgba(255,255,255,.6);white-space:nowrap;font-weight:300}
+.strip-score{font-size:11px;color:var(--gold-light);white-space:nowrap;font-weight:500}
+.activity-type-badge{display:inline-flex;align-items:center;gap:6px;background:var(--cream-dark);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.06em}
+.activity-type-badge.grammar-badge{background:var(--grammar-light);color:var(--grammar-accent)}
+
+/* QUESTION */
+.q-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:var(--navy);line-height:1.5;margin-bottom:18px}
+.q-hint{font-size:13px;color:var(--muted);margin-bottom:16px;margin-top:-12px;font-style:italic}
+
+/* OPTIONS */
+.options-grid{display:grid;gap:8px}
+.options-grid.two-col{grid-template-columns:1fr 1fr}
+.option{width:100%;text-align:left;padding:12px 16px;border:1px solid #D8D4C8;border-radius:var(--rs);background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);display:flex;align-items:center;gap:11px;transition:all .15s}
+.option:hover:not(:disabled){border-color:var(--navy);background:var(--cream)}
+.opt-letter{width:24px;height:24px;border-radius:50%;border:1px solid #D8D4C8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;color:var(--muted)}
+.option.correct{border-color:var(--correct);background:var(--correct-bg)}
+.option.correct .opt-letter{background:var(--correct);border-color:var(--correct);color:#fff}
+.option.wrong{border-color:var(--wrong);background:var(--wrong-bg)}
+.option.wrong .opt-letter{background:var(--wrong);border-color:var(--wrong);color:#fff}
+
+/* MATCHING */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match-col-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;text-align:center}
+.match-card{padding:11px 12px;border:1.5px solid #D8D4C8;border-radius:var(--rs);background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);text-align:center;transition:all .15s;min-height:48px;display:flex;align-items:center;justify-content:center;line-height:1.3}
+.match-card:hover{border-color:var(--navy);background:var(--cream)}
+.match-card.selected{border-color:var(--gold);background:#FDF8EF;font-weight:500}
+.match-card.matched{border-color:var(--correct);background:var(--correct-bg);color:var(--correct);cursor:default}
+.match-card.wrong-flash{border-color:var(--wrong);background:var(--wrong-bg)}
+.match-progress{text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px}
+
+/* IMAGE */
+.image-card{background:var(--cream);border:1px solid #E8E4DA;border-radius:var(--r);padding:24px;text-align:center;margin-bottom:16px}
+.image-label{font-size:12px;color:var(--muted);margin-top:10px}
+
+/* AUDIO */
+.audio-prompt{background:var(--navy);border-radius:var(--r);padding:26px 24px;text-align:center;margin-bottom:20px;cursor:pointer;transition:background .15s}
+.audio-prompt:hover{background:var(--navy-light)}
+.audio-icon{font-size:34px;margin-bottom:8px}
+.audio-word{font-family:'Playfair Display',serif;font-size:24px;color:#fff;margin-bottom:4px}
+.audio-hint{font-size:12px;color:rgba(255,255,255,.5)}
+
+/* FEEDBACK */
+.feedback{background:var(--cream-dark);border-radius:var(--rs);padding:11px 14px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:6px}
+.feedback strong{color:var(--navy);font-weight:500}
+.feedback.correct-fb{background:var(--correct-bg);border-left:3px solid var(--correct)}
+.feedback.wrong-fb{background:var(--wrong-bg);border-left:3px solid var(--wrong)}
+.next-btn{margin-top:14px;padding:11px 24px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+.next-btn:hover{background:var(--navy-light)}
+
+/* FILL BLANK */
+.blank-input{width:100%;padding:12px 16px;border:1.5px solid #D8D4C8;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:16px;color:var(--navy);background:#fff;margin-bottom:10px;transition:border-color .15s}
+.blank-input:focus{outline:none;border-color:var(--navy)}
+.blank-input.correct{border-color:var(--correct);background:var(--correct-bg)}
+.blank-input.wrong{border-color:var(--wrong);background:var(--wrong-bg)}
+.submit-btn{padding:11px 24px;background:var(--gold);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer}
+.submit-btn:hover{background:#B8832E}
+
+/* RESULT */
+.result-header{background:var(--navy);padding:28px 24px 22px;text-align:center;border-bottom:3px solid var(--gold)}
+.result-score{font-family:'Playfair Display',serif;font-size:52px;font-weight:600;color:#fff;line-height:1}
+.result-score span{color:var(--gold)}
+.result-msg{font-size:12px;color:rgba(255,255,255,.6);margin-top:5px;font-weight:300;letter-spacing:.04em}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#D8D4C8;border:1px solid #D8D4C8;border-radius:var(--r);overflow:hidden;margin:18px 0}
+.stat-cell{background:#fff;padding:14px 10px;text-align:center}
+.stat-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--navy)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.08em}
+.primary-btn{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:8px;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.primary-btn:hover{background:var(--navy-light)}
+.secondary-btn{width:100%;padding:12px;background:transparent;color:var(--navy);border:1px solid #D8D4C8;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:border-color .15s}
+.secondary-btn:hover{border-color:var(--navy)}
+.gold-bar{display:inline-block;width:20px;height:2px;background:var(--gold);vertical-align:middle;margin-right:4px}
+
+/* PROGRESS */
+.history-empty{text-align:center;padding:44px 20px;color:var(--muted)}
+.history-empty .big{font-size:32px;color:var(--cream-dark);margin-bottom:8px}
+
+/* SETTINGS */
+.voice-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid #D8D4C8;border-radius:var(--rs);background:#fff;cursor:pointer;margin-bottom:7px;transition:all .15s}
+.voice-card:hover{border-color:var(--navy)}
+.voice-card.selected{border-color:var(--gold);background:#FDF8EF}
+
+/* LOADING */
+.loading-wrap{padding:56px 24px;text-align:center;color:var(--muted)}
+.loading-word{font-family:'Playfair Display',serif;font-size:32px;color:var(--navy);margin-bottom:8px;display:block;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+// ═══════════════════════════════════════════════════════════
+// VOCABULARY DATA
+// ═══════════════════════════════════════════════════════════
+const VOCAB_TOPICS = [
+  {id:'saludos',    icon:'👋', label:'Saludos y despedidas',   visual:false, words:[['hola','hello'],['buenos días','good morning'],['buenas tardes','good afternoon'],['buenas noches','good night'],['adiós','goodbye'],['hasta luego','see you later'],['hasta mañana','see you tomorrow'],['hasta pronto','see you soon'],['¿Cómo estás?','How are you?'],['muy bien','very well'],['así así','so-so'],['mal','bad'],['¿Qué tal?','How are you doing?'],['¿Qué pasa?','What\'s happening?']]},
+  {id:'frutas',     icon:'🍎', label:'Las frutas',              visual:true,  words:[['la manzana','apple'],['la naranja','orange'],['la fresa','strawberry'],['la uva','grape'],['el limón','lemon'],['la banana','banana'],['el plátano','plantain'],['el melón','melon'],['el jugo','juice'],['la fruta','fruit']]},
+  {id:'verduras',   icon:'🥦', label:'Los vegetales',           visual:true,  words:[['la papa','potato'],['el maíz','corn'],['la zanahoria','carrot'],['la lechuga','lettuce'],['el brócoli','broccoli'],['la espinaca','spinach'],['el pepino','cucumber'],['el apio','celery'],['la col','cabbage'],['la coliflor','cauliflower']]},
+  {id:'colores',    icon:'🎨', label:'Los colores',             visual:true,  words:[['rojo','red'],['azul','blue'],['verde','green'],['amarillo','yellow'],['negro','black'],['blanco','white'],['anaranjado','orange'],['morado','purple'],['rosado','pink'],['gris','gray'],['marrón','brown'],['violeta','violet']]},
+  {id:'ropa',       icon:'👗', label:'La ropa',                 visual:true,  words:[['la camisa','shirt'],['los pantalones','pants'],['los zapatos','shoes'],['el vestido','dress'],['la falda','skirt'],['el suéter','sweater'],['el abrigo','coat'],['las botas','boots'],['el sombrero','hat'],['los calcetines','socks'],['la chaqueta','jacket'],['el cinturón','belt'],['la blusa','blouse'],['los guantes','gloves'],['llevar','to wear']]},
+  {id:'comida',     icon:'🍽️', label:'La comida',               visual:false, words:[['el desayuno','breakfast'],['el almuerzo','lunch'],['la cena','dinner'],['el pollo','chicken'],['el arroz','rice'],['el pan','bread'],['el queso','cheese'],['el huevo','egg'],['el pescado','fish'],['la carne','meat'],['la hamburguesa','hamburger'],['el bocadillo','sandwich'],['delicioso','delicious'],['tener hambre','to be hungry'],['tener sed','to be thirsty'],['comer','to eat'],['beber','to drink'],['cocinar','to cook']]},
+  {id:'cocina',     icon:'🍳', label:'La cocina',               visual:false, words:[['la mesa','table'],['la comida','food'],['la merienda','afternoon snack'],['el menú','menu'],['el restaurante','restaurant'],['poner la mesa','to set the table'],['lavar los platos','to wash the dishes'],['secar los platos','to dry the dishes'],['desayunar','to eat breakfast'],['almorzar','to eat lunch'],['cenar','to eat dinner']]},
+  {id:'deportes',   icon:'⚽', label:'Los deportes',            visual:false, words:[['el fútbol','soccer'],['el baloncesto','basketball'],['el béisbol','baseball'],['el tenis','tennis'],['el voleibol','volleyball'],['el golf','golf'],['el hockey','hockey'],['el boliche','bowling'],['nadar','to swim'],['jugar','to play'],['el atleta','athlete'],['el juego','game'],['montar en bicicleta','to ride a bike'],['caminar','to walk']]},
+  {id:'ciudad',     icon:'🏙️', label:'La ciudad',               visual:false, words:[['la escuela','school'],['la biblioteca','library'],['el banco','bank'],['el hospital','hospital'],['el restaurante','restaurant'],['el parque','park'],['el museo','museum'],['la iglesia','church'],['el supermercado','supermarket'],['el cine','movie theater'],['el zoológico','zoo'],['el hotel','hotel'],['el teatro','theater'],['la fuente','fountain'],['el aeropuerto','airport'],['el café','café'],['el correo','post office'],['el monumento','monument']]},
+  {id:'casa',       icon:'🏠', label:'La casa',                 visual:false, words:[['la cocina','kitchen'],['la sala','living room'],['el dormitorio','bedroom'],['el baño','bathroom'],['el comedor','dining room'],['el jardín','garden'],['el garaje','garage'],['la ventana','window'],['la puerta','door'],['la escalera','staircase'],['el apartamento','apartment'],['la casa','house'],['el primer piso','first floor'],['el segundo piso','second floor']]},
+  {id:'familia',    icon:'👨‍👩‍👧', label:'La familia',              visual:false, words:[['la madre','mother'],['el padre','father'],['el hermano','brother'],['la hermana','sister'],['el abuelo','grandfather'],['la abuela','grandmother'],['el hijo','son'],['la hija','daughter'],['el tío','uncle'],['la tía','aunt'],['el primo','cousin'],['el esposo','husband'],['la esposa','wife'],['el sobrino','nephew'],['la sobrina','niece'],['el amigo','friend'],['el nieto','grandson'],['la nieta','granddaughter']]},
+  {id:'cuerpo',     icon:'🫀', label:'El cuerpo',               visual:true,  words:[['la cabeza','head'],['el ojo','eye'],['la nariz','nose'],['la boca','mouth'],['el brazo','arm'],['la mano','hand'],['la pierna','leg'],['el pie','foot'],['la cara','face'],['el estómago','stomach'],['la piel','skin'],['el hueso','bone']]},
+  {id:'clase',      icon:'📚', label:'La clase',                visual:false, words:[['el libro','book'],['el lápiz','pencil'],['la pluma','pen'],['el papel','paper'],['la silla','chair'],['la mesa','table'],['la pizarra','chalkboard'],['la mochila','backpack'],['el cuaderno','notebook'],['la puerta','door'],['el diccionario','dictionary'],['la calculadora','calculator'],['la computadora','computer'],['el reloj','clock'],['el mapa','map'],['la bandera','flag'],['el borrador','eraser']]},
+  {id:'profesiones',icon:'👨‍⚕️', label:'Las profesiones',         visual:false, words:[['el médico','doctor'],['el maestro','teacher'],['el policía','policeman'],['el bombero','firefighter'],['el mesero','waiter'],['la mesera','waitress'],['la secretaria','secretary'],['el atleta','athlete'],['el estudiante','student'],['el director','principal'],['el jefe','boss'],['el empleado','employee']]},
+  {id:'animales',   icon:'🦁', label:'Los animales',            visual:true,  words:[['el perro','dog'],['el gato','cat'],['el caballo','horse'],['la vaca','cow'],['el elefante','elephant'],['el león','lion'],['la jirafa','giraffe'],['el oso','bear'],['el mono','monkey'],['la cebra','zebra'],['el ratón','mouse'],['el cerdo','pig'],['la llama','llama']]},
+  {id:'transporte', icon:'🚗', label:'El transporte',           visual:false, words:[['el coche','car'],['el autobús','bus'],['el tren','train'],['el avión','airplane'],['la bicicleta','bicycle'],['el metro','subway'],['el taxi','taxi'],['el barco','boat'],['la moto','motorcycle'],['el tranvía','streetcar'],['a pie','on foot']]},
+  {id:'tiempo',     icon:'🌤️', label:'El tiempo',               visual:false, words:[['hace calor','it\'s hot'],['hace frío','it\'s cold'],['hace sol','it\'s sunny'],['llueve','it\'s raining'],['nieva','it\'s snowing'],['está nublado','it\'s cloudy'],['hace viento','it\'s windy'],['hace fresco','it\'s cool'],['llovizna','it\'s drizzling'],['hace buen tiempo','it\'s nice weather'],['hace mal tiempo','it\'s bad weather'],['¿Qué tiempo hace?','How is the weather?']]},
+  {id:'dias',       icon:'📅', label:'Días de la semana',       visual:false, words:[['lunes','Monday'],['martes','Tuesday'],['miércoles','Wednesday'],['jueves','Thursday'],['viernes','Friday'],['sábado','Saturday'],['domingo','Sunday']]},
+  {id:'meses',      icon:'🗓️', label:'Meses del año',           visual:false, words:[['enero','January'],['febrero','February'],['marzo','March'],['abril','April'],['mayo','May'],['junio','June'],['julio','July'],['agosto','August'],['septiembre','September'],['octubre','October'],['noviembre','November'],['diciembre','December']]},
+  {id:'hora',       icon:'🕐', label:'La hora',                 visual:false, words:[['¿Qué hora es?','What time is it?'],['Es la una.','It\'s one o\'clock.'],['Son las dos.','It\'s two o\'clock.'],['y cuarto','quarter past'],['menos cuarto','quarter to'],['y media','half past'],['en punto','on the dot'],['mediodía','noon'],['medianoche','midnight'],['la semana','week'],['el mes','month'],['el año','year']]},
+  {id:'pasatiempos',icon:'🎭', label:'Los pasatiempos',         visual:false, words:[['bailar','to dance'],['cantar','to sing'],['leer','to read'],['nadar','to swim'],['caminar','to walk'],['escuchar música','to listen to music'],['ir al parque','to go to the park'],['ir a la playa','to go to the beach'],['tocar el piano','to play the piano'],['hacer un viaje','to take a trip'],['pasear','to stroll'],['tomar el sol','to sunbathe'],['escribir','to write']]},
+  {id:'aeropuerto', icon:'✈️', label:'El aeropuerto',           visual:false, words:[['el avión','airplane'],['el aeropuerto','airport'],['el vuelo','flight'],['el pasaporte','passport'],['la visa','visa'],['llegar','to arrive'],['salir','to leave'],['el viaje','trip'],['la terminal','terminal'],['el helicóptero','helicopter'],['el vuelo nacional','domestic flight'],['el vuelo internacional','international flight']]},
+  {id:'geografia',  icon:'🗺️', label:'La geografía',            visual:false, words:[['la ciudad','city'],['el pueblo','town'],['el país','country'],['el mundo','world'],['la playa','beach'],['el norte','north'],['el sur','south'],['el este','east'],['el oeste','west'],['la capital','capital'],['el continente','continent'],['la región','region'],['el estado','state'],['la nación','nation']]},
+  {id:'artes',      icon:'🎨', label:'Las bellas artes',        visual:false, words:[['la música','music'],['la pintura','painting'],['el teatro','theater'],['la danza','dance'],['la literatura','literature'],['el cine','cinema'],['la escultura','sculpture'],['la arquitectura','architecture']]},
+  {id:'compras',    icon:'🛍️', label:'Las compras',             visual:false, words:[['barato','inexpensive'],['caro','expensive'],['¿Cuánto cuesta?','How much does it cost?'],['costar','to cost'],['ir de compras','to go shopping'],['pagar','to pay'],['la tienda','store'],['comprar','to buy']]},
+  {id:'trabajo',    icon:'💼', label:'El trabajo',              visual:false, words:[['trabajar','to work'],['el salario','salary'],['la oficina','office'],['el jefe','boss'],['el empleado','employee'],['el correo electrónico','email'],['la computadora','computer'],['el teléfono','telephone'],['el dinero','money']]},
+  {id:'educacion',  icon:'🎓', label:'La educación',            visual:false, words:[['estudiar','to study'],['aprender','to learn'],['enseñar','to teach'],['pensar','to think'],['el examen','test'],['la prueba','quiz'],['el estudiante','student'],['la biblioteca','library'],['la clase','class'],['el profesor','teacher'],['la mochila','backpack'],['el cuaderno','notebook']]},
+  {id:'naturaleza', icon:'🌿', label:'Naturaleza y ambiente',   visual:false, words:[['el árbol','tree'],['la flor','flower'],['el animal','animal'],['la planta','plant'],['el fuego','fire'],['el aire','air'],['el agua','water'],['la tierra','land/earth'],['el mundo','world'],['plantar','to plant']]},
+  {id:'gramatica',  icon:'📝', label:'La gramática',            visual:false, words:[['el sustantivo','noun'],['el verbo','verb'],['el adjetivo','adjective'],['el adverbio','adverb'],['el pronombre','pronoun'],['la oración','sentence'],['la palabra','word'],['el párrafo','paragraph'],['el alfabeto','alphabet'],['el acento','accent mark']]},
+  {id:'matematicas',icon:'➕', label:'Las matemáticas',         visual:false, words:[['y','plus'],['menos','minus'],['por','times'],['dividido por','divided by'],['es','equals']]},
+  {id:'caracteristicas',icon:'🧍',label:'Características',     visual:false, words:[['alto','tall'],['bajo','short'],['delgado','thin'],['gordo','fat'],['guapo','handsome'],['feo','ugly'],['joven','young'],['viejo','old'],['grande','big'],['pequeño','small'],['inteligente','intelligent'],['simpático','nice'],['antipático','mean'],['perezoso','lazy'],['trabajador','hard-working'],['feliz','happy'],['triste','sad'],['nervioso','nervous'],['ocupado','busy'],['emocionado','excited']]},
+
+  {id:'verbos_ar',    icon:'🗣️', label:'Verbos -ar',           visual:false, words:[
+    ['hablar','to speak/talk'],['bailar','to dance'],['caminar','to walk'],
+    ['estudiar','to study'],['trabajar','to work'],['escuchar','to listen'],
+    ['mirar','to look at/watch'],['comprar','to buy'],['llegar','to arrive'],
+    ['celebrar','to celebrate'],['surfear','to surf'],['escapar','to escape'],
+    ['investigar','to investigate'],['imaginar','to imagine'],['visitar','to visit'],
+    ['tomar','to take/drink'],['usar','to use'],['necesitar','to need'],
+    ['descansar','to rest'],['preguntar','to ask'],['contestar','to answer'],
+    ['ayudar','to help'],['buscar','to look for'],['cantar','to sing'],
+    ['cocinar','to cook'],['dibujar','to draw'],['pintar','to paint'],
+    ['colorear','to color'],['ganar','to win'],['apostar','to bet'],
+    ['terminar','to finish'],['adivinar','to guess'],['nadar','to swim'],
+    ['tocar','to touch/play an instrument'],['regresar','to return'],
+    ['preparar','to prepare'],['practicar','to practice'],
+  ]},
+  {id:'verbos_er_ir',  icon:'📖', label:'Verbos -er / -ir',     visual:false, words:[
+    ['comer','to eat'],['beber','to drink'],['leer','to read'],
+    ['escribir','to write'],['vivir','to live'],['correr','to run'],
+    ['ver','to see/watch'],['hacer','to do/make'],['poner','to put/place'],
+    ['salir','to leave/go out'],['entender','to understand'],['deber','to should/owe'],
+    ['aprender','to learn'],['vender','to sell'],['recibir','to receive'],
+    ['abrir','to open'],['subir','to go up/upload'],['compartir','to share'],
+    ['elegir','to choose'],['perder','to lose'],['oír','to hear'],
+    ['romper','to break'],['meter','to put inside'],
+  ]},
+  {id:'verbos_irreg',  icon:'⚡', label:'Verbos irregulares',   visual:false, words:[
+    ['ser','to be (permanent)'],['estar','to be (temporary)'],
+    ['ir','to go'],['tener','to have'],['venir','to come'],
+    ['querer','to want/love'],['poder','to be able to/can'],
+    ['saber','to know (facts)'],['conocer','to know (people/places)'],
+    ['dar','to give'],['decir','to say/tell'],['traer','to bring'],
+    ['pensar','to think/plan'],['preferir','to prefer'],
+    ['empezar','to begin/start'],['entender','to understand'],
+    ['dormir','to sleep'],['jugar','to play'],['sentir','to feel'],
+    ['pedir','to ask for/order'],
+  ]},
+  {id:'verbos_reflex', icon:'🪥', label:'Verbos reflexivos',    visual:false, words:[
+    ["llamarse","to be called/named"],['levantarse','to get up'],
+    ['sentarse','to sit down'],['ducharse','to shower'],
+    ['bañarse','to bathe'],['lavarse','to wash oneself'],
+    ["cepillarse los dientes","to brush one's teeth"],
+    ['acostarse','to go to bed'],['despertarse','to wake up'],
+    ['vestirse','to get dressed'],["peinarse","to comb one's hair"],
+    ['maquillarse','to put on makeup'],['afeitarse','to shave'],
+    ["ponerse","to put on (clothing)"],["quitarse","to take off (clothing)"],
+    ["dar de comer","to feed (someone)"],
+  ]},
+  {id:'paises',     icon:'🌎', label:'Los países',              visual:false, words:[['España','Spain'],['México','Mexico'],['Cuba','Cuba'],['Puerto Rico','Puerto Rico'],['Guatemala','Guatemala'],['Honduras','Honduras'],['Nicaragua','Nicaragua'],['Costa Rica','Costa Rica'],['Panamá','Panama'],['Colombia','Colombia'],['Venezuela','Venezuela'],['Ecuador','Ecuador'],['Perú','Peru'],['Bolivia','Bolivia'],['Chile','Chile'],['Argentina','Argentina'],['Uruguay','Uruguay'],['Paraguay','Paraguay'],['Estados Unidos','United States']]},
+];
+
+// ═══════════════════════════════════════════════════════════
+// GRAMMAR DATA — Level 1
+// Each topic has hand-written multiple-choice questions
+// format: {q, opts:[A,B,C,D], ans:0-3, exp:'explanation'}
+// ═══════════════════════════════════════════════════════════
+const GRAMMAR_TOPICS = [
+  {id:'g_ser_estar', icon:'⚖️', label:'Ser vs. Estar', questions:[
+    {q:'María _____ estudiante en una escuela grande.',opts:['es','está','son','están'],ans:0,exp:'Use SER for identity and permanent characteristics. Being a student is a role/identity → es.'},
+    {q:'¿Dónde _____ el baño, por favor?',opts:['es','está','son','están'],ans:1,exp:'Use ESTAR for location of people and things → está.'},
+    {q:'Nosotros _____ muy cansados hoy.',opts:['somos','estamos','son','están'],ans:1,exp:'Use ESTAR for temporary states and conditions like being tired → estamos.'},
+    {q:'Él _____ de México pero ahora _____ en España.',opts:['es / está','está / es','es / es','está / está'],ans:0,exp:'SER for origin (es de México), ESTAR for current location (está en España).'},
+    {q:'La sopa _____ fría. ¡No me gusta!',opts:['es','está','ser','estar'],ans:1,exp:'Use ESTAR for conditions that can change, like temperature of food → está fría.'},
+    {q:'Mi abuela _____ muy simpática.',opts:['está','es','estoy','eres'],ans:1,exp:'Use SER for personality traits and inherent characteristics → es simpática.'},
+    {q:'¿Cómo _____ tú hoy?',opts:['eres','soy','estás','estoy'],ans:2,exp:'¿Cómo estás? asks about current condition/health → ESTAR.'},
+    {q:'El libro _____ en la mesa.',opts:['es','soy','está','estás'],ans:2,exp:'ESTAR is used for the location of objects → está en la mesa.'},
+  ]},
+  {id:'g_adj', icon:'📐', label:'Adjective Agreement', questions:[
+    {q:'La chica es muy _____ .',opts:['alto','alta','altos','altas'],ans:1,exp:'Adjectives agree in gender and number. "La chica" is feminine singular → alta.'},
+    {q:'Los chicos son muy _____ .',opts:['inteligente','inteligentes','inteligenta','inteligentes'],ans:1,exp:'"Los chicos" is masculine plural. Adjectives add -s for plural → inteligentes.'},
+    {q:'Tengo una falda _____ .',opts:['rojo','roja','rojos','rojas'],ans:1,exp:'"Falda" is feminine singular → roja.'},
+    {q:'Mis hermanos son _____ .',opts:['trabajador','trabajadora','trabajadores','trabajadoras'],ans:2,exp:'"Hermanos" is masculine plural. Adjectives ending in consonant add -es → trabajadores.'},
+    {q:'La clase es _____ .',opts:['aburrido','aburrida','aburridos','aburridas'],ans:1,exp:'"La clase" is feminine singular → aburrida.'},
+    {q:'Tengo dos gatos _____ .',opts:['negro','negra','negros','negras'],ans:2,exp:'"Gatos" is masculine plural → negros.'},
+    {q:'Es una _____ idea.',opts:['bueno','buena','buenos','buenas'],ans:1,exp:'"Idea" is feminine singular → buena.'},
+    {q:'El maestro es muy _____ .',opts:['simpática','simpático','simpáticos','simpáticas'],ans:1,exp:'"Maestro" is masculine singular → simpático.'},
+  ]},
+  {id:'g_ar', icon:'🔤', label:'Regular -ar Verbs', questions:[
+    {q:'Yo _____ español todos los días.',opts:['habla','hablo','hablas','hablan'],ans:1,exp:'Regular -ar verb hablar: yo → hablo.'},
+    {q:'Ella _____ mucho en clase.',opts:['trabajas','trabaja','trabajamos','trabajan'],ans:1,exp:'Regular -ar verb trabajar: ella → trabaja.'},
+    {q:'Nosotros _____ en el parque los domingos.',opts:['caminan','caminas','caminamos','camino'],ans:2,exp:'Regular -ar verb caminar: nosotros → caminamos.'},
+    {q:'¿Tú _____ en la escuela o en casa?',opts:['estudia','estudias','estudiamos','estudian'],ans:1,exp:'Regular -ar verb estudiar: tú → estudias.'},
+    {q:'Ellos _____ pizza todos los viernes.',opts:['compro','compra','compras','compran'],ans:3,exp:'Regular -ar verb comprar: ellos → compran.'},
+    {q:'Yo _____ mucho en las fiestas.',opts:['bailas','baila','bailo','bailan'],ans:2,exp:'Regular -ar verb bailar: yo → bailo.'},
+    {q:'Ustedes _____ en el restaurante.',opts:['cenan','cena','cenas','cenamos'],ans:0,exp:'Regular -ar verb cenar: ustedes → cenan.'},
+    {q:'Ella _____ la guitarra muy bien.',opts:['toca','tocas','toco','tocan'],ans:0,exp:'Regular -ar verb tocar: ella → toca.'},
+  ]},
+  {id:'g_er_ir', icon:'🔡', label:'Regular -er / -ir Verbs', questions:[
+    {q:'Yo _____ mucho en la cafetería.',opts:['comes','come','como','comen'],ans:2,exp:'Regular -er verb comer: yo → como.'},
+    {q:'Ella _____ un libro interesante.',opts:['lees','leo','lee','leen'],ans:2,exp:'Regular -er verb leer: ella → lee.'},
+    {q:'Nosotros _____ agua todos los días.',opts:['bebes','bebe','bebemos','beben'],ans:2,exp:'Regular -er verb beber: nosotros → bebemos.'},
+    {q:'¿Tú _____ en Madrid?',opts:['vive','vivo','vivís','vives'],ans:3,exp:'Regular -ir verb vivir: tú → vives.'},
+    {q:'Ellos _____ cartas a sus amigos.',opts:['escribo','escribes','escribe','escriben'],ans:3,exp:'Regular -ir verb escribir: ellos → escriben.'},
+    {q:'Yo _____ las instrucciones del profesor.',opts:['recibes','recibe','recibo','reciben'],ans:2,exp:'Regular -ir verb recibir: yo → recibo.'},
+    {q:'¿Ustedes _____ el menú?',opts:['comprende','comprendes','comprendo','comprenden'],ans:3,exp:'Regular -er verb comprender: ustedes → comprenden.'},
+    {q:'Mi amigo _____ libros de aventura.',opts:['lees','leo','lee','leer'],ans:2,exp:'Regular -er verb leer: mi amigo (él) → lee.'},
+  ]},
+  {id:'g_stem', icon:'🔀', label:'Stem-changing Verbs', questions:[
+    {q:'Yo _____ ir al cine esta noche. (querer)',opts:['quero','quiero','quieres','quieren'],ans:1,exp:'Querer is e→ie stem-changing. Yo: quiero (not quero — the stem vowel changes).'},
+    {q:'Ella _____ muy bien el español. (entender)',opts:['entiende','entende','entiendes','entendemos'],ans:0,exp:'Entender is e→ie. Ella: entiende.'},
+    {q:'¿Tú _____ jugar al fútbol? (poder)',opts:['puedo','podo','puedes','podemos'],ans:2,exp:'Poder is o→ue. Tú: puedes.'},
+    {q:'Yo _____ un café, por favor. (pedir)',opts:['pedo','pido','pides','pedimos'],ans:1,exp:'Pedir is e→i. Yo: pido.'},
+    {q:'Nosotros no _____ la tarea. (entender)',opts:['entendemos','entendamos','entendimos','entendémos'],ans:0,exp:'Nosotros does NOT stem-change in e→ie verbs: entendemos (regular).'},
+    {q:'Él _____ ocho horas cada noche. (dormir)',opts:['dormo','duerme','duermes','dormemos'],ans:1,exp:'Dormir is o→ue. Él: duerme.'},
+    {q:'Yo _____ a las ocho de la mañana. (volver)',opts:['vuelvo','volvo','vuelves','volvemos'],ans:0,exp:'Volver is o→ue. Yo: vuelvo.'},
+    {q:'Ellos _____ en un restaurante caro. (preferir)',opts:['preferen','prefieren','prefieren','preferimos'],ans:1,exp:'Preferir is e→ie. Ellos: prefieren.'},
+  ]},
+  {id:'g_ir', icon:'🚶', label:'Ir + a + Infinitive', questions:[
+    {q:'Yo _____ al parque mañana.',opts:['voy a ir','va a ir','vas a ir','vamos a ir'],ans:0,exp:'Ir + a + infinitive expresses near future. Yo → voy a ir.'},
+    {q:'Ella _____ estudiar esta noche.',opts:['voy a','va a','vas a','van a'],ans:1,exp:'Ella (3rd person singular) → va a estudiar.'},
+    {q:'Nosotros _____ comer en ese restaurante.',opts:['vamos a','van a','vas a','voy a'],ans:0,exp:'Nosotros → vamos a comer.'},
+    {q:'¿Qué _____ hacer tú este fin de semana?',opts:['vas a','va a','voy a','van a'],ans:0,exp:'Tú → vas a hacer.'},
+    {q:'Ellos _____ ver una película esta tarde.',opts:['voy a','vas a','va a','van a'],ans:3,exp:'Ellos → van a ver.'},
+    {q:'Yo _____ comprar un libro nuevo.',opts:['va a','vas a','voy a','vamos a'],ans:2,exp:'Yo → voy a comprar.'},
+    {q:'Mañana él _____ visitar a su abuela.',opts:['van a','voy a','vas a','va a'],ans:3,exp:'Él → va a visitar.'},
+    {q:'¿Ustedes _____ practicar español esta semana?',opts:['voy a','vas a','va a','van a'],ans:3,exp:'Ustedes → van a practicar.'},
+  ]},
+  {id:'g_cer_cir', icon:'🔧', label:'-cer / -cir Verbs', questions:[
+    {q:'Yo _____ a muchas personas en mi clase. (conocer)',opts:['conoco','conozco','conoces','conocen'],ans:1,exp:'-cer/-cir verbs add -zco in yo form: yo conozco.'},
+    {q:'Yo _____ tocar la guitarra. (saber)',opts:['sabo','sabes','sé','sabemos'],ans:2,exp:'Saber is irregular: yo sé (also has -zco pattern in conocer but saber is its own special form).'},
+    {q:'Ella _____ bien el camino al aeropuerto. (conocer)',opts:['conozco','conoces','conoce','conocen'],ans:2,exp:'Conocer: ella → conoce (regular all persons except yo).'},
+    {q:'Yo _____ la respuesta correcta. (saber)',opts:['sabo','sabes','sabe','sé'],ans:3,exp:'Saber: yo → sé.'},
+    {q:'¿Tú _____ hablar inglés? (saber)',opts:['sé','sabes','sabe','sabemos'],ans:1,exp:'Saber: tú → sabes.'},
+    {q:'Yo _____ a la profesora de música. (conocer)',opts:['conoco','conoces','conozco','conoce'],ans:2,exp:'Conocer: yo → conozco (not conoco — add z before c in yo form).'},
+    {q:'Nosotros _____ dónde está la biblioteca. (saber)',opts:['sabemos','saben','sabes','sé'],ans:0,exp:'Saber: nosotros → sabemos (regular nosotros ending).'},
+    {q:'¿Tú _____ a mi primo Carlos? (conocer)',opts:['conozco','conoces','conoce','conocen'],ans:1,exp:'Conocer: tú → conoces.'},
+  ]},
+  {id:'g_prog', icon:'🔄', label:'Present Progressive', questions:[
+    {q:'Yo _____ la tarea ahora.',opts:['hago','estoy haciendo','estás haciendo','hace'],ans:1,exp:'Present progressive = estar (conjugated) + gerund (-ando/-iendo). Yo estoy haciendo.'},
+    {q:'Ella _____ en el parque en este momento.',opts:['corre','está corriendo','estoy corriendo','corres'],ans:1,exp:'Correr → corriendo. Ella está corriendo.'},
+    {q:'¿Qué _____ tú?',opts:['estás comiendo','estoy comiendo','está comiendo','están comiendo'],ans:0,exp:'Comer → comiendo. Tú → estás comiendo.'},
+    {q:'Nosotros _____ una película ahora.',opts:['vemos','estamos viendo','están viendo','estoy viendo'],ans:1,exp:'Ver → viendo. Nosotros estamos viendo.'},
+    {q:'El gerundio de "hablar" es _____.',opts:['hablando','habliendo','hablar','habló'],ans:0,exp:'-ar verbs form the gerund with -ando: hablar → hablando.'},
+    {q:'El gerundio de "comer" es _____.',opts:['comando','comiendo','comer','comido'],ans:1,exp:'-er verbs form the gerund with -iendo: comer → comiendo.'},
+    {q:'Ellos _____ música ahora mismo.',opts:['escuchan','están escuchando','estoy escuchando','escuchando'],ans:1,exp:'Escuchar → escuchando. Ellos están escuchando.'},
+    {q:'El gerundio de "vivir" es _____.',opts:['vivando','viviendo','vivir','vivido'],ans:1,exp:'-ir verbs form the gerund with -iendo: vivir → viviendo.'},
+  ]},
+  {id:'g_gustar', icon:'❤️', label:'Gustar / Encantar / Preferir', questions:[
+    {q:'A mí _____ el chocolate.',opts:['gusto','gustas','gusta','gustan'],ans:2,exp:'Gustar agrees with the subject (what is liked). El chocolate is singular → gusta.'},
+    {q:'A ella _____ los libros de aventura.',opts:['gusta','gustan','gustas','gusto'],ans:1,exp:'Los libros is plural → gustan.'},
+    {q:'¿A ti _____ la música clásica?',opts:['te gusta','te gustan','me gusta','le gusta'],ans:0,exp:'A ti = te. La música is singular → te gusta.'},
+    {q:'A nosotros _____ bailar salsa.',opts:['nos gusta','nos gustan','me gusta','les gusta'],ans:0,exp:'A nosotros = nos. Bailar (infinitive) is singular → nos gusta.'},
+    {q:'A ellos _____ las películas de acción.',opts:['le gusta','les gusta','les gustan','le gustan'],ans:2,exp:'A ellos = les. Las películas is plural → les gustan.'},
+    {q:'A mí _____ la pizza.',opts:['me encanta','me encantan','te encanta','le encanta'],ans:0,exp:'A mí = me. La pizza is singular → me encanta.'},
+    {q:'¿A usted _____ los deportes?',opts:['te gustan','le gusta','le gustan','me gustan'],ans:2,exp:'A usted = le. Los deportes is plural → le gustan.'},
+    {q:'A Juan _____ estudiar por las noches.',opts:['le gusta','le gustan','les gusta','me gusta'],ans:0,exp:'A Juan = le. Estudiar (infinitive) is singular → le gusta.'},
+  ]},
+  {id:'g_iop', icon:'🎯', label:'Indirect Object Pronouns', questions:[
+    {q:'_____ gusta mucho el fútbol. (to me)',opts:['Te','Le','Me','Les'],ans:2,exp:'Indirect object pronoun for "to me" = me.'},
+    {q:'_____ escribo una carta a mi madre.',opts:['Me','Le','Te','Les'],ans:1,exp:'"To her/him" = le. Yo le escribo (a mi madre).'},
+    {q:'El profesor _____ explica la lección. (to us)',opts:['me','te','le','nos'],ans:3,exp:'"To us" = nos.'},
+    {q:'¿ _____ gusta el helado? (to you, informal)',opts:['Me','Le','Te','Les'],ans:2,exp:'"To you" (informal) = te.'},
+    {q:'Ella _____ da un regalo. (to them)',opts:['me','te','les','nos'],ans:2,exp:'"To them" = les.'},
+    {q:'_____ gustan las películas de terror. (to him)',opts:['Me','Le','Te','Nos'],ans:1,exp:'"To him" = le. Las películas (plural) → le gustan.'},
+    {q:'Mi abuela _____ manda una carta cada mes. (to me)',opts:['te','le','me','les'],ans:2,exp:'"To me" = me.'},
+    {q:'El médico _____ receta una medicina. (to her)',opts:['nos','te','me','le'],ans:3,exp:'"To her" = le.'},
+  ]},
+  {id:'g_personal_a', icon:'👤', label:'Personal A', questions:[
+    {q:'Veo _____ María en el parque.',opts:['a','de','en','—'],ans:0,exp:'Personal a is required before a specific person as a direct object: Veo a María.'},
+    {q:'Busco _____ un buen médico.',opts:['a','de','—','en'],ans:2,exp:'When the direct object is a non-specific person, personal a is NOT used: Busco un buen médico.'},
+    {q:'Llamo _____ mi amigo Carlos.',opts:['—','de','a','en'],ans:2,exp:'Carlos is a specific person → personal a required: Llamo a mi amigo Carlos.'},
+    {q:'Tengo _____ dos hermanas.',opts:['a','de','—','en'],ans:2,exp:'Tener + person does NOT use personal a: Tengo dos hermanas.'},
+    {q:'¿Conoces _____ la profesora de música?',opts:['—','de','en','a'],ans:3,exp:'La profesora is a specific person → personal a: ¿Conoces a la profesora?'},
+    {q:'Buscan _____ los estudiantes perdidos.',opts:['—','de','en','a'],ans:3,exp:'Los estudiantes perdidos are specific people → personal a required.'},
+    {q:'Escucho _____ mi música favorita.',opts:['a','—','de','en'],ans:1,exp:'Music is not a person → no personal a: Escucho mi música favorita.'},
+    {q:'Mi madre visita _____ mi abuela cada domingo.',opts:['—','de','a','en'],ans:2,exp:'Mi abuela is a specific person → personal a: visita a mi abuela.'},
+  ]},
+  {id:'g_questions', icon:'❓', label:'Question Words', questions:[
+    {q:'_____ es tu nombre?',opts:['Cómo','Cuándo','Dónde','Qué'],ans:0,exp:'¿Cómo? asks "how/what" — ¿Cómo te llamas? / ¿Cómo es tu nombre?'},
+    {q:'_____ vives tú?',opts:['Qué','Cuándo','Dónde','Quién'],ans:2,exp:'¿Dónde? asks "where." ¿Dónde vives?'},
+    {q:'_____ es tu cumpleaños?',opts:['Quién','Cuándo','Dónde','Cómo'],ans:1,exp:'¿Cuándo? asks "when." ¿Cuándo es tu cumpleaños?'},
+    {q:'_____ habla con el profesor?',opts:['Qué','Dónde','Cuándo','Quién'],ans:3,exp:'¿Quién? asks "who." ¿Quién habla con el profesor?'},
+    {q:'_____ estudias español?',opts:['Cuándo','Dónde','Por qué','Quién'],ans:2,exp:'¿Por qué? asks "why." ¿Por qué estudias español?'},
+    {q:'_____ libros tienes en tu mochila?',opts:['Cuántos','Cuándo','Dónde','Por qué'],ans:0,exp:'¿Cuántos? asks "how many" (with plural masculine noun).'},
+    {q:'_____ es la capital de España?',opts:['Quién','Cuándo','Cuál','Dónde'],ans:2,exp:'¿Cuál? asks "which/what" when selecting from options.'},
+    {q:'_____ haces los fines de semana?',opts:['Cuándo','Dónde','Quién','Qué'],ans:3,exp:'¿Qué? asks "what." ¿Qué haces?'},
+  ]},
+  {id:'g_negation', icon:'🚫', label:'Negation', questions:[
+    {q:'Yo _____ hablo francés.',opts:['no','nada','nunca','nadie'],ans:0,exp:'Simple negation: place "no" directly before the verb.'},
+    {q:'— ¿Hablas chino? — _____ , no hablo chino.',opts:['Sí','No','Nunca','Nada'],ans:1,exp:'"No" used as a standalone answer and before the verb.'},
+    {q:'Ella _____ come carne. (never)',opts:['no','nada','nunca','nadie'],ans:2,exp:'"Nunca" means "never" and can go before or after the verb. Ella nunca come carne.'},
+    {q:'_____ viene a la fiesta. (nobody)',opts:['Nunca','Nada','Nadie','No'],ans:2,exp:'"Nadie" means "nobody/no one."'},
+    {q:'No tengo _____ en la mochila. (nothing)',opts:['nadie','nunca','nada','no'],ans:2,exp:'"Nada" means "nothing." Used after the verb with "no" before it.'},
+    {q:'No quiero _____ . (neither one)',opts:['nada','ninguno','nunca','nadie'],ans:1,exp:'"Ninguno/ningún" means "none/neither." No quiero ninguno.'},
+    {q:'¿Tienes algo? — No, no tengo _____.',opts:['algo','alguien','nada','nunca'],ans:2,exp:'"Algo" (something) becomes "nada" (nothing) in negative response.'},
+    {q:'Ellos _____ estudian los domingos.',opts:['sí','nada','nadie','no'],ans:3,exp:'Simple negation: "no" before the verb. Ellos no estudian.'},
+  ]},
+];
+
+
+const GRAMMAR_CONCEPTS = {
+  g_ser_estar: {
+    title: 'Ser vs. Estar',
+    summary: 'Both mean "to be" in English, but they are used in very different situations. SER is for permanent or defining characteristics. ESTAR is for temporary states, conditions, and location.',
+    examples: [
+      ['Ella es médica.', 'She is a doctor. (identity/profession → SER)'],
+      ['Ella está cansada.', 'She is tired. (temporary state → ESTAR)'],
+      ['El museo está en Madrid.', 'The museum is in Madrid. (location → ESTAR)'],
+      ['Soy de México.', 'I am from Mexico. (origin → SER)'],
+    ],
+    tip: 'Quick trick: SER = DOCTOR (Description, Origin, Characteristic, Time, Occupation, Relationship)'
+  },
+  g_adj: {
+    title: 'Adjective Agreement',
+    summary: 'In Spanish, adjectives must match the noun they describe in both gender (masculine/feminine) and number (singular/plural).',
+    examples: [
+      ['el chico alto / la chica alta', 'masculine → alto, feminine → alta'],
+      ['los chicos altos / las chicas altas', 'add -s for plural'],
+      ['un estudiante trabajador / una estudiante trabajadora', 'consonant ending: add -a for feminine'],
+    ],
+    tip: 'Most adjectives end in -o (masculine). Change -o to -a for feminine. Add -s or -es for plural.'
+  },
+  g_ar: {
+    title: 'Regular -ar Verbs (Present Tense)',
+    summary: 'Regular -ar verbs follow a predictable pattern. Drop the -ar ending and add the correct ending for each subject pronoun.',
+    examples: [
+      ['hablar → yo hablo, tú hablas, él habla', 'I speak, you speak, he speaks'],
+      ['nosotros hablamos, ellos hablan', 'we speak, they speak'],
+      ['Ella trabaja mucho.', 'She works a lot.'],
+    ],
+    tip: 'The endings are: -o, -as, -a, -amos, -áis, -an. The yo form always ends in -o.'
+  },
+  g_er_ir: {
+    title: 'Regular -er / -ir Verbs (Present Tense)',
+    summary: '-er and -ir verbs follow their own patterns. They are similar to each other — the only difference is in the nosotros and vosotros forms.',
+    examples: [
+      ['comer → yo como, tú comes, él come', 'I eat, you eat, he eats'],
+      ['vivir → yo vivo, tú vives, él vive', 'I live, you live, he lives'],
+      ['nosotros comemos / nosotros vivimos', '-er: -emos, -ir: -imos'],
+    ],
+    tip: '-er endings: -o, -es, -e, -emos, -éis, -en. -ir endings: -o, -es, -e, -imos, -ís, -en.'
+  },
+  g_stem: {
+    title: 'Stem-changing Verbs',
+    summary: 'Some verbs change their stem vowel in all forms EXCEPT nosotros and vosotros. The three types are: e→ie, o→ue, and e→i.',
+    examples: [
+      ['querer (e→ie): quiero, quieres, quiere, queremos, quieren', 'to want'],
+      ['poder (o→ue): puedo, puedes, puede, podemos, pueden', 'to be able to'],
+      ['pedir (e→i): pido, pides, pide, pedimos, piden', 'to ask for/order'],
+    ],
+    tip: 'Think of the "boot" — draw a boot shape around all forms except nosotros/vosotros. Only those inside the boot change.'
+  },
+  g_ir: {
+    title: 'Ir + a + Infinitive',
+    summary: 'To express what is going to happen in the near future, use the verb IR (to go) conjugated + a + the infinitive of another verb.',
+    examples: [
+      ['Yo voy a estudiar esta noche.', 'I am going to study tonight.'],
+      ['Ella va a comer en casa.', 'She is going to eat at home.'],
+      ['Nosotros vamos a ver una película.', 'We are going to watch a movie.'],
+    ],
+    tip: 'IR present tense: voy, vas, va, vamos, vais, van. Then add "a" + infinitive.'
+  },
+  g_cer_cir: {
+    title: '-cer / -cir Verbs (conocer & saber)',
+    summary: 'Verbs ending in -cer or -cir add -zco in the yo form only. All other forms are regular. The two key verbs are conocer (to know a person/place) and saber (to know a fact/how to do something).',
+    examples: [
+      ['conocer → yo conozco, tú conoces, ella conoce', 'to know (a person or place)'],
+      ['saber → yo sé, tú sabes, ella sabe', 'to know (a fact or skill)'],
+      ['Conozco a María. / Sé hablar inglés.', 'I know María. / I know how to speak English.'],
+    ],
+    tip: 'CONOCER = personal knowledge (people, places). SABER = factual knowledge or skills (facts, how to do things).'
+  },
+  g_prog: {
+    title: 'Present Progressive',
+    summary: 'Use the present progressive to describe what is happening RIGHT NOW. Form it with ESTAR (conjugated) + the gerund (-ando for -ar verbs, -iendo for -er/-ir verbs).',
+    examples: [
+      ['Yo estoy comiendo.', 'I am eating. (right now)'],
+      ['Ella está hablando por teléfono.', 'She is talking on the phone.'],
+      ['hablar → hablando / comer → comiendo / vivir → viviendo', 'gerund formation'],
+    ],
+    tip: 'Key word: "right now" or "at this moment" = use present progressive. For habits or routines, use the simple present.'
+  },
+  g_gustar: {
+    title: 'Gustar / Encantar / Preferir',
+    summary: 'GUSTAR works differently from English "to like." The thing being liked is actually the subject. Use GUSTA for singular things or infinitives, and GUSTAN for plural things.',
+    examples: [
+      ['Me gusta el fútbol.', 'I like soccer. (literally: soccer pleases me)'],
+      ['Me gustan los tacos.','I like tacos. (tacos = plural → gustan)'],
+      ['A ella le encanta bailar.', 'She loves to dance. (infinitive → encanta)'],
+    ],
+    tip: 'The indirect object pronoun (me, te, le, nos, les) tells you WHO likes it. The verb agrees with WHAT is liked, not who.'
+  },
+  g_iop: {
+    title: 'Indirect Object Pronouns',
+    summary: 'Indirect object pronouns tell us TO WHOM or FOR WHOM something happens. They go BEFORE the conjugated verb.',
+    examples: [
+      ['me → to me', 'te → to you (informal)'],
+      ['le → to him/her/you (formal)', 'nos → to us'],
+      ['les → to them/you all', 'El profesor me explica la lección. (to me)'],
+    ],
+    tip: 'These pronouns are also used with GUSTAR: me gusta (to me), te gusta (to you), le gusta (to him/her).'
+  },
+  g_personal_a: {
+    title: 'Personal A',
+    summary: 'In Spanish, when a SPECIFIC PERSON is the direct object of a verb, you must place "a" before them. This does not apply to things, animals (usually), or non-specific people.',
+    examples: [
+      ['Veo a María en el parque.', 'I see María. (specific person → personal a)'],
+      ['Busco un médico.', "I'm looking for a doctor. (non-specific → no personal a)"],
+      ['Llamo a mis amigos.', 'I call my friends. (specific people → personal a)'],
+    ],
+    tip: "Ask yourself: is the direct object a specific, identifiable person? If yes → use personal a. If it's a thing or a non-specific person → no a."
+  },
+  g_questions: {
+    title: 'Question Words',
+    summary: 'Question words (palabras interrogativas) always carry an accent mark in Spanish. They introduce questions and each has a specific meaning.',
+    examples: [
+      ['¿Qué? = What?   ¿Quién? = Who?   ¿Dónde? = Where?', ''],
+      ['¿Cuándo? = When?   ¿Por qué? = Why?   ¿Cómo? = How?', ''],
+      ['¿Cuántos/as? = How many?   ¿Cuál? = Which?', ''],
+    ],
+    tip: 'All question words have accent marks: qué, quién, dónde, cuándo, por qué, cómo, cuánto, cuál. In a question, the verb comes before the subject.'
+  },
+  g_negation: {
+    title: 'Negation',
+    summary: 'The simplest way to make a sentence negative is to place NO directly before the conjugated verb. Spanish also has negative words like nunca (never), nada (nothing), and nadie (nobody).',
+    examples: [
+      ['Yo no hablo chino.', "I don't speak Chinese."],
+      ['Ella nunca come carne.', 'She never eats meat.'],
+      ['No tengo nada en la mochila.', 'I have nothing in my backpack.'],
+    ],
+    tip: 'Double negatives are CORRECT in Spanish: No tengo nada (I don\'t have nothing = I have nothing). Never say: No tengo algo.'
+  },
+};
+
+
+// ═══════════════════════════════════════════════════════════
+// SVG IMAGES for visual vocab
+// ═══════════════════════════════════════════════════════════
+const IMAGES = {
+  'apple':'<svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="32" fill="#E53E3E"/><ellipse cx="50" cy="55" rx="20" ry="28" fill="#FC8181" opacity=".3"/><path d="M50 23 Q55 10 65 15" stroke="#2F855A" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="62" cy="14" rx="8" ry="5" fill="#48BB78" transform="rotate(-20 62 14)"/></svg>',
+  'orange':'<svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="30" fill="#ED8936"/><ellipse cx="50" cy="55" rx="18" ry="25" fill="#F6AD55" opacity=".4"/><path d="M50 24 Q53 14 60 18" stroke="#2F855A" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+  'strawberry':'<svg viewBox="0 0 100 100"><path d="M50 80 Q30 60 30 45 Q30 25 50 25 Q70 25 70 45 Q70 60 50 80Z" fill="#E53E3E"/><circle cx="42" cy="45" r="2" fill="#fff" opacity=".6"/><circle cx="55" cy="52" r="2" fill="#fff" opacity=".6"/><path d="M42 25 Q40 14 32 16 M50 24 Q50 12 50 10 M58 25 Q60 14 68 16" stroke="#2F855A" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+  'dog':'<svg viewBox="0 0 100 100"><ellipse cx="50" cy="62" rx="26" ry="20" fill="#C9973A"/><circle cx="50" cy="38" r="18" fill="#C9973A"/><ellipse cx="38" cy="28" rx="8" ry="12" fill="#B7800A" transform="rotate(-10 38 28)"/><ellipse cx="62" cy="28" rx="8" ry="12" fill="#B7800A" transform="rotate(10 62 28)"/><circle cx="44" cy="36" r="3" fill="#2D3748"/><circle cx="56" cy="36" r="3" fill="#2D3748"/><ellipse cx="50" cy="44" rx="6" ry="4" fill="#E8B85A"/><path d="M44 48 Q50 54 56 48" stroke="#2D3748" stroke-width="1.5" fill="none"/></svg>',
+  'cat':'<svg viewBox="0 0 100 100"><ellipse cx="50" cy="62" rx="22" ry="18" fill="#A0AEC0"/><circle cx="50" cy="40" r="18" fill="#A0AEC0"/><polygon points="34,26 28,10 42,20" fill="#718096"/><polygon points="66,26 72,10 58,20" fill="#718096"/><circle cx="43" cy="38" r="3" fill="#2D3748"/><circle cx="57" cy="38" r="3" fill="#2D3748"/><ellipse cx="50" cy="45" rx="4" ry="3" fill="#FEB2B2"/><path d="M44 48 Q50 53 56 48" stroke="#2D3748" stroke-width="1.5" fill="none"/></svg>',
+  'horse':'<svg viewBox="0 0 100 100"><ellipse cx="52" cy="62" rx="28" ry="18" fill="#8B6914"/><ellipse cx="34" cy="42" rx="12" ry="18" fill="#8B6914" transform="rotate(-20 34 42)"/><line x1="36" y1="56" x2="32" y2="85" stroke="#8B6914" stroke-width="7" stroke-linecap="round"/><line x1="48" y1="58" x2="44" y2="85" stroke="#8B6914" stroke-width="7" stroke-linecap="round"/><line x1="62" y1="60" x2="66" y2="85" stroke="#8B6914" stroke-width="7" stroke-linecap="round"/><line x1="72" y1="58" x2="78" y2="85" stroke="#8B6914" stroke-width="7" stroke-linecap="round"/><circle cx="30" cy="35" r="3" fill="#2D3748"/></svg>',
+  'red':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#E53E3E"/></svg>',
+  'blue':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#3182CE"/></svg>',
+  'green':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#38A169"/></svg>',
+  'yellow':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#D69E2E"/></svg>',
+  'black':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#1A202C"/></svg>',
+  'white':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#F7FAFC" stroke="#E2E8F0" stroke-width="2"/></svg>',
+  'purple':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#805AD5"/></svg>',
+  'pink':'<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="12" fill="#D53F8C"/></svg>',
+  'shirt':'<svg viewBox="0 0 100 100"><path d="M30 20 L15 40 L28 45 L28 85 L72 85 L72 45 L85 40 L70 20 L60 30 Q50 38 40 30Z" fill="#3182CE"/></svg>',
+  'pants':'<svg viewBox="0 0 100 100"><path d="M20 20 L20 60 L40 60 L50 90 L60 60 L80 60 L80 20Z" fill="#2D3748"/></svg>',
+  'shoes':'<svg viewBox="0 0 100 100"><path d="M15 65 Q15 50 35 48 L65 48 Q80 48 85 58 Q88 68 75 72 L20 72 Q12 72 15 65Z" fill="#8B4513"/><path d="M35 48 L35 38 Q35 28 45 28 L55 28 Q60 28 60 35 L60 48" fill="#6B3410"/></svg>',
+  'head':'<svg viewBox="0 0 100 100"><circle cx="50" cy="45" r="32" fill="#FBBF24"/><circle cx="40" cy="40" r="4" fill="#2D3748"/><circle cx="60" cy="40" r="4" fill="#2D3748"/><ellipse cx="50" cy="52" rx="5" ry="3" fill="#F87171"/><path d="M40 62 Q50 70 60 62" stroke="#2D3748" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+  'hand':'<svg viewBox="0 0 100 100"><rect x="35" y="55" width="30" height="30" rx="6" fill="#FBBF24"/><rect x="35" y="30" width="8" height="32" rx="4" fill="#FBBF24"/><rect x="46" y="25" width="8" height="35" rx="4" fill="#FBBF24"/><rect x="57" y="28" width="8" height="32" rx="4" fill="#FBBF24"/><rect x="25" y="40" width="14" height="24" rx="7" fill="#FBBF24"/></svg>',
+  'default':'<svg viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" rx="8" fill="#E2E8F0"/><text x="50" y="58" text-anchor="middle" font-size="28" fill="#718096">?</text></svg>',
+};
+function getImage(word){
+  const w=word.toLowerCase().replace(/^(el |la |los |las |un |una )/,'').trim();
+  const map={'manzana':'apple','naranja':'orange','fresa':'strawberry','uva':'grape','perro':'dog','gato':'cat','caballo':'horse','rojo':'red','azul':'blue','verde':'green','amarillo':'yellow','negro':'black','blanco':'white','morado':'purple','rosado':'pink','camisa':'shirt','pantalones':'pants','zapatos':'shoes','cabeza':'head','mano':'hand'};
+  return IMAGES[map[w]]||IMAGES.default;
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// READING COMPREHENSION DATA — Level 1
+// NSE format: contextEng + authentic Spanish text + questions
+// ═══════════════════════════════════════════════════════════
+const READING_PASSAGES = [
+  {
+    id: 'cafe_menu',
+    type: 'Café Menu',
+    icon: '☕',
+    contextEng: 'You are at a café in Madrid and you see the following menu.',
+    text: `CAFÉ SOL Y LUNA
+─────────────────
+BEBIDAS
+Café con leche .......... €2.50
+Té verde ................ €2.00
+Jugo de naranja ......... €3.00
+Agua mineral ............ €1.50
+
+DESAYUNO
+Tostada con mantequilla . €1.80
+Croissant ............... €2.20
+Huevos revueltos ........ €4.50
+
+MERIENDA
+Bocadillo de queso ...... €3.50
+Bocadillo de jamón ...... €4.00
+Pastel de chocolate ..... €2.80
+─────────────────
+¡Buen provecho!`,
+    questions: [
+      { q: 'How much does a glass of orange juice cost?', opts: ['€2.00', '€2.50', '€3.00', '€1.50'], ans: 2, exp: 'Jugo de naranja costs €3.00 according to the menu.' },
+      { q: 'Which of the following is listed under "DESAYUNO" (breakfast)?', opts: ['Bocadillo de jamón', 'Huevos revueltos', 'Pastel de chocolate', 'Té verde'], ans: 1, exp: 'Huevos revueltos (scrambled eggs) appears under the DESAYUNO section.' },
+      { q: 'What is the cheapest item on the entire menu?', opts: ['Té verde', 'Café con leche', 'Agua mineral', 'Tostada con mantequilla'], ans: 2, exp: 'Agua mineral at €1.50 is the least expensive item listed.' },
+    ]
+  },
+  {
+    id: 'school_schedule',
+    type: 'School Schedule',
+    icon: '📋',
+    contextEng: 'A student at a Spanish school shares their class schedule for Monday.',
+    text: `HORARIO — LUNES
+━━━━━━━━━━━━━━━━━━━━━━━━
+8:00  — Matemáticas   (Aula 12)
+9:00  — Historia      (Aula 7)
+10:00 — RECREO  ☕
+10:30 — Inglés        (Aula 3)
+11:30 — Educación Física (Gimnasio)
+12:30 — Ciencias      (Laboratorio)
+13:30 — ALMUERZO  🍽️
+14:30 — Arte          (Aula 15)
+15:30 — FIN DEL DÍA`,
+    questions: [
+      { q: 'What class does the student have immediately after the morning break (recreo)?', opts: ['Historia', 'Matemáticas', 'Inglés', 'Arte'], ans: 2, exp: 'The schedule shows Inglés at 10:30, which is right after the 10:00 recreo.' },
+      { q: 'Where does the student have Physical Education?', opts: ['Aula 12', 'Laboratorio', 'Aula 3', 'Gimnasio'], ans: 3, exp: 'Educación Física takes place in the Gimnasio according to the schedule.' },
+      { q: 'How many classes does the student have before lunch?', opts: ['3', '4', '5', '2'], ans: 2, exp: 'Before lunch (13:30) there are 5 classes: Matemáticas, Historia, Inglés, Educación Física, and Ciencias.' },
+    ]
+  },
+  {
+    id: 'social_post',
+    type: 'Social Media Post',
+    icon: '📱',
+    contextEng: 'You see the following post on a Spanish social media app.',
+    text: `@lunaviajera
+────────────────────────
+¡Hola a todos! 🌍✈️
+
+Estoy en Buenos Aires con mi familia.
+¡Es una ciudad increíble! Hoy visitamos
+el famoso barrio de La Boca y comimos
+en un restaurante muy delicioso.
+
+Mañana vamos a ver un espectáculo
+de tango. ¡Estoy muy emocionada! 💃
+
+El tiempo está perfecto — hace sol
+y no hace mucho calor. 
+
+#Argentina #BuenosAires #Viaje
+────────────────────────
+❤️ 142   💬 38   ↗️ 17`,
+    questions: [
+      { q: 'Where is @lunaviajera right now?', opts: ['Spain', 'Mexico', 'Argentina', 'Colombia'], ans: 2, exp: 'The post says "Estoy en Buenos Aires" and uses the hashtag #Argentina.' },
+      { q: 'What is she planning to do tomorrow?', opts: ['Visit La Boca', 'Go to a restaurant', 'Watch a tango show', 'Travel to another city'], ans: 2, exp: 'She writes "Mañana vamos a ver un espectáculo de tango" — tomorrow they will see a tango show.' },
+      { q: 'How does she describe the weather?', opts: ['Cold and rainy', 'Cloudy and windy', 'Sunny and not too hot', 'Very hot and humid'], ans: 2, exp: 'She says "hace sol y no hace mucho calor" — it is sunny and not very hot.' },
+    ]
+  },
+  {
+    id: 'store_ad',
+    type: 'Advertisement',
+    icon: '🛍️',
+    contextEng: 'You see the following advertisement in a shop window in Barcelona.',
+    text: `╔══════════════════════════╗
+║   TIENDA DEPORTIVA GÓMEZ  ║
+╠══════════════════════════╣
+║                           ║
+║   🏷️  GRAN REBAJA  🏷️     ║
+║                           ║
+║  Zapatos de fútbol  -30%  ║
+║  Camisetas de equipo -25% ║
+║  Balones de fútbol  -40%  ║
+║  Ropa deportiva     -20%  ║
+║                           ║
+║  Solo este fin de semana  ║
+║  Sábado y domingo         ║
+║                           ║
+║  Horario: 9:00 — 21:00    ║
+║  C/ Gran Vía, 45          ║
+╚══════════════════════════╝`,
+    questions: [
+      { q: 'What type of store is this advertisement for?', opts: ['A clothing boutique', 'A sports store', 'A shoe store', 'A supermarket'], ans: 1, exp: '"Tienda Deportiva" means sports store. The products listed (fútbol shoes, sports clothing) confirm this.' },
+      { q: 'Which item has the biggest discount?', opts: ['Zapatos de fútbol', 'Camisetas de equipo', 'Balones de fútbol', 'Ropa deportiva'], ans: 2, exp: 'Balones de fútbol (soccer balls) have a 40% discount, which is the largest discount listed.' },
+      { q: 'When is this sale available?', opts: ['All week long', 'Monday and Tuesday', 'Saturday and Sunday only', 'Every weekend'], ans: 2, exp: 'The ad says "Solo este fin de semana — Sábado y domingo" meaning this weekend only, Saturday and Sunday.' },
+    ]
+  },
+  {
+    id: 'postcard',
+    type: 'Postcard',
+    icon: '📮',
+    contextEng: 'You find the following postcard that your friend Sofía sent from her vacation.',
+    text: `┌─────────────────────────────┐
+│  ¡Saludos desde Cancún! 🌴  │
+│                             │
+│ Querida Ana:                │
+│                             │
+│ ¡Estoy en México con mis    │
+│ padres y mi hermano menor!  │
+│ El hotel es muy bonito y    │
+│ la playa es increíble.      │
+│                             │
+│ Todos los días nadamos en   │
+│ el mar y comemos mariscos.  │
+│ ¡Me encanta la comida!      │
+│                             │
+│ El lunes regresamos a casa. │
+│ ¡Hasta pronto!              │
+│                             │
+│ Con cariño,                 │
+│ Sofía 💙                    │
+└─────────────────────────────┘`,
+    questions: [
+      { q: 'Who is Sofía traveling with?', opts: ['Her friends', 'Her parents and younger brother', 'Her school class', 'Her grandparents'], ans: 1, exp: 'She writes "Estoy en México con mis padres y mi hermano menor" — with her parents and younger brother.' },
+      { q: 'What do they do every day at the beach?', opts: ['Play volleyball', 'Take surfing lessons', 'Swim in the sea', 'Read books'], ans: 2, exp: 'Sofía says "Todos los días nadamos en el mar" — every day they swim in the sea.' },
+      { q: 'When does Sofía return home?', opts: ['Sunday', 'Saturday', 'Friday', 'Monday'], ans: 3, exp: '"El lunes regresamos a casa" — they return home on Monday.' },
+    ]
+  },
+  {
+    id: 'weather',
+    type: 'Weather Forecast',
+    icon: '🌤️',
+    contextEng: 'You see the following weather forecast for the week in a Spanish newspaper.',
+    text: `PRONÓSTICO DEL TIEMPO — MADRID
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LUNES    ☀️  Hace sol       22°C
+MARTES   ⛅  Está nublado   18°C
+MIÉRCOLES 🌧️ Llueve         15°C
+JUEVES   🌧️  Llueve         14°C
+VIERNES  ⛅  Está nublado   17°C
+SÁBADO   ☀️  Hace sol       21°C
+DOMINGO  ☀️  Hace sol       23°C
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Temperatura más alta: domingo 23°C
+Temperatura más baja: jueves  14°C`,
+    questions: [
+      { q: 'What is the weather like on Wednesday?', opts: ['Sunny', 'Cloudy', 'Rainy', 'Windy'], ans: 2, exp: 'The forecast shows "Llueve" (it rains) with a rain cloud icon for miércoles (Wednesday).' },
+      { q: 'Which day has the highest temperature of the week?', opts: ['Lunes', 'Sábado', 'Domingo', 'Martes'], ans: 2, exp: 'The forecast notes "Temperatura más alta: domingo 23°C" — Sunday is the warmest day.' },
+      { q: 'How many days does it rain according to the forecast?', opts: ['One day', 'Two days', 'Three days', 'Four days'], ans: 1, exp: 'It rains on Wednesday (Llueve) and Thursday (Llueve) — two days total.' },
+    ]
+  },
+  {
+    id: 'movie_listing',
+    type: 'Movie Listing',
+    icon: '🎬',
+    contextEng: 'You see the following movie listings at a cinema in Seville.',
+    text: `🎬 CINE SEVILLA — ESTA SEMANA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SALA 1
+"El Viaje Mágico"
+Animación | Para toda la familia
+Horarios: 11:00, 14:00, 17:00, 20:00
+Precio: Adultos €9 | Niños €6
+
+SALA 2  
+"La Ciudad Perdida"
+Aventura | Mayores de 12 años
+Horarios: 16:00, 19:00, 22:00
+Precio: Adultos €10 | Niños €7
+
+SALA 3
+"Amor en Barcelona"
+Romance | Mayores de 16 años
+Horarios: 18:30, 21:30
+Precio: Adultos €10
+
+COMPRA TUS ENTRADAS EN LÍNEA
+www.cinesevilla.es`,
+    questions: [
+      { q: 'Which film is appropriate for the whole family including young children?', opts: ['La Ciudad Perdida', 'Amor en Barcelona', 'El Viaje Mágico', 'All three films'], ans: 2, exp: '"El Viaje Mágico" is listed as "Para toda la familia" (for the whole family) and is an animation.' },
+      { q: 'What is the price of a child\'s ticket for "La Ciudad Perdida"?', opts: ['€6', '€7', '€9', '€10'], ans: 1, exp: 'For Sala 2 (La Ciudad Perdida), the child ticket price is €7.' },
+      { q: 'At what time can you NOT see "El Viaje Mágico"?', opts: ['11:00', '14:00', '16:00', '20:00'], ans: 2, exp: 'El Viaje Mágico shows at 11:00, 14:00, 17:00, and 20:00. There is no 16:00 showing for that film.' },
+    ]
+  },
+  {
+    id: 'friend_note',
+    type: 'Personal Note',
+    icon: '📝',
+    contextEng: 'You find the following note that your classmate left on your desk at school.',
+    text: `¡Hola! 👋
+
+Te escribo porque necesito tu ayuda.
+Mañana tenemos el examen de ciencias
+y no entiendo la lección de la semana
+pasada. ¿Puedes estudiar conmigo
+esta tarde en la biblioteca?
+
+Podemos ir después de las clases,
+a las 4:00. Yo tengo los apuntes
+y el libro. Tú eres muy inteligente
+y siempre sacas buenas notas. 😊
+
+Si no puedes, llámame al 612-555-834
+o escríbeme un mensaje.
+
+¡Gracias amigo/a!
+— Tomás`,
+    questions: [
+      { q: 'Why is Tomás writing this note?', opts: ['To invite someone to a party', 'To ask for help studying for a test', 'To borrow a book', 'To cancel plans'], ans: 1, exp: 'Tomás says he does not understand the lesson and asks if they can study together for the ciencias (science) exam.' },
+      { q: 'Where does Tomás suggest they meet?', opts: ['At his house', 'In the classroom', 'At the library', 'At a café'], ans: 2, exp: 'He suggests meeting "en la biblioteca" (at the library) after class.' },
+      { q: 'What does Tomás say he will bring?', opts: ['Snacks and drinks', 'His notes and the book', 'A computer', 'Extra pencils'], ans: 1, exp: 'Tomás writes "Yo tengo los apuntes y el libro" — he has the notes and the book.' },
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════════════════
+// MASTERY SYSTEM
+// ═══════════════════════════════════════════════════════════
+function loadMastery(){try{return JSON.parse(localStorage.getItem('nsa_mastery')||'{}');}catch{return{};}}
+function saveMastery(m){try{localStorage.setItem('nsa_mastery',JSON.stringify(m));}catch{}}
+function getWordStatus(topicId,word){
+  const m=loadMastery();const d=m[topicId]?.[word];
+  if(!d||d.correct===0)return'new';
+  const u=new Set(d.sessions||[]).size;
+  if(d.correct>=3&&u>=2)return'mastered';
+  if(d.correct>=3)return'familiar';
+  return'learning';
+}
+function recordAnswer(topicId,word,correct,sessionDate){
+  const m=loadMastery();
+  if(!m[topicId])m[topicId]={};
+  if(!m[topicId][word])m[topicId][word]={correct:0,wrong:0,sessions:[]};
+  if(correct){m[topicId][word].correct++;if(!m[topicId][word].sessions.includes(sessionDate))m[topicId][word].sessions.push(sessionDate);}
+  else m[topicId][word].wrong=(m[topicId][word].wrong||0)+1;
+  saveMastery(m);
+}
+function getTopicStats(topicId,keys){
+  const c={new:0,learning:0,familiar:0,mastered:0};
+  keys.forEach(k=>c[getWordStatus(topicId,k)]++);
+  return c;
+}
+function getTopicBadge(topicId,keys){
+  const s=getTopicStats(topicId,keys),t=keys.length;
+  if(s.mastered===t)return{label:'Mastered ✓',cls:'badge-mastered'};
+  if(s.mastered>0||s.familiar>0)return{label:'In progress',cls:'badge-learning'};
+  return{label:'New',cls:'badge-new'};
+}
+
+// ═══════════════════════════════════════════════════════════
+// VOCAB ACTIVITY GENERATION
+// ═══════════════════════════════════════════════════════════
+const ACTIVITY_TYPES=['multiple-choice','audio-to-word','matching','listen-match','fill-blank','multiple-choice'];
+const VISUAL_ACTIVITY_TYPES=['multiple-choice','audio-to-word','image-assoc','matching','listen-match','fill-blank'];
+function shuffle(arr){return[...arr].sort(()=>Math.random()-.5);}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+
+function pickVocabWords(topic,n=6){
+  const g={new:[],learning:[],familiar:[],mastered:[]};
+  topic.words.forEach(w=>g[getWordStatus(topic.id,w[0])].push(w));
+  return[...g.new,...g.learning,...g.familiar,...g.mastered].slice(0,n);
+}
+
+function buildVocabSession(topic){
+  const words=pickVocabWords(topic,Math.min(topic.words.length,8));
+  const types=topic.visual?VISUAL_ACTIVITY_TYPES:ACTIVITY_TYPES;
+  return words.map((word,i)=>buildVocabActivity(types[i%types.length],word,topic));
+}
+
+function buildVocabActivity(type,word,topic){
+  const[spanish,english]=word;
+  const dist=topic.words.filter(w=>w[0]!==spanish).sort(()=>Math.random()-.5).slice(0,3);
+  if(type==='multiple-choice'){const opts=shuffle([english,...dist.map(d=>d[1])]);return{type,word:spanish,answer:english,question:`What does "${spanish}" mean?`,options:opts,correct:opts.indexOf(english),actLabel:'Multiple Choice'};}
+  if(type==='audio-to-word'){const opts=shuffle([english,...dist.map(d=>d[1])]);return{type,word:spanish,answer:english,question:'Listen and choose the correct meaning.',options:opts,correct:opts.indexOf(english),actLabel:'Listen & Choose'};}
+  if(type==='image-assoc'){const opts=shuffle([spanish,...dist.map(d=>d[0])]);return{type,word:spanish,answer:spanish,image:getImage(spanish),imageLabel:english,question:'Which Spanish word matches this image?',options:opts,correct:opts.indexOf(spanish),actLabel:'Image Match'};}
+  if(type==='fill-blank'){return{type,word:spanish,answer:spanish,question:`Translate to Spanish: "${english}"`,actLabel:'Fill in the Blank'};}
+  if(type==='matching'||type==='listen-match'){const pairs=shuffle([word,...dist.slice(0,3)]).slice(0,4);return{type:'matching',listenMode:type==='listen-match',word:spanish,pairs,actLabel:type==='listen-match'?'Listen & Match':'Read & Match'};}
+  const opts=shuffle([english,...dist.map(d=>d[1])]);return{type:'multiple-choice',word:spanish,answer:english,question:`What does "${spanish}" mean?`,options:opts,correct:opts.indexOf(english),actLabel:'Multiple Choice'};
+}
+
+// ═══════════════════════════════════════════════════════════
+// GRAMMAR SESSION GENERATION
+// ═══════════════════════════════════════════════════════════
+function pickGrammarQuestions(topic,n=8){
+  const g={new:[],learning:[],familiar:[],mastered:[]};
+  topic.questions.forEach(q=>g[getWordStatus(topic.id,q.q)].push(q));
+  return shuffle([...g.new,...g.learning,...g.familiar,...g.mastered]).slice(0,n);
+}
+
+function buildGrammarSession(topic){
+  return pickGrammarQuestions(topic,Math.min(topic.questions.length,8)).map(q=>({
+    type:'grammar-mc',
+    word:q.q,
+    question:q.q,
+    options:q.opts,
+    correct:q.ans,
+    explanation:q.exp,
+    actLabel:'Grammar in Action',
+    isGrammar:true,
+  }));
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let S={
+  screen:'home',
+  mode:'vocab',   // 'vocab' | 'grammar' | 'reading'
+  topicId:null,
+  activities:[],current:0,sessionCorrect:0,
+  sessionDate:todayStr(),answered:false,
+  chosen:null,fillValue:'',
+  matchLeft:null,matchRight:null,matchedPairs:[],wrongFlash:null,
+  readingPassage:null,readingQ:0,readingScore:0,readingAnswered:false,readingChosen:null,
+};
+
+// ═══════════════════════════════════════════════════════════
+// SPEECH
+// ═══════════════════════════════════════════════════════════
+function getSpanishVoices(){return window.speechSynthesis.getVoices().filter(v=>v.lang.startsWith('es')).sort((a,b)=>a.name.localeCompare(b.name));}
+function getSavedVoice(){const saved=localStorage.getItem('nsa_voice');const voices=getSpanishVoices();if(saved){const v=voices.find(v=>v.name===saved);if(v)return v;}return voices.find(v=>/Monica|Jorge|Paulina|Diego|Marisol|Lucia|Miguel/i.test(v.name))||voices[0]||null;}
+function getSavedRate(){return parseFloat(localStorage.getItem('nsa_rate')||'0.85');}
+function speak(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=getSavedRate();u.pitch=1;const v=getSavedVoice();if(v)u.voice=v;window.speechSynthesis.speak(u);}
+window.speechSynthesis&&window.speechSynthesis.getVoices();
+window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+function render(){
+  const app=document.getElementById('app');
+  if(S.screen==='home')     app.innerHTML=homeHTML();
+  if(S.screen==='concept')  app.innerHTML=conceptHTML();
+  if(S.screen==='reading')   app.innerHTML=readingHTML();
+  if(S.screen==='session')  app.innerHTML=sessionHTML();
+  if(S.screen==='result')   app.innerHTML=resultHTML();
+  if(S.screen==='progress') app.innerHTML=progressHTML();
+  if(S.screen==='settings') app.innerHTML=settingsHTML();
+  bind();
+}
+
+const hdr=active=>`<div class="header">
+  <div class="header-left"><span class="h-title">Practica</span><span class="h-sub">Nivel Uno · Spanish 1</span></div>
+  <div class="h-nav">
+    <button class="nav-btn${active==='home'?' active':''}" id="nav-home">Inicio</button>
+    <button class="nav-btn${active==='progress'?' active':''}" id="nav-prog">Progreso</button>
+    <button class="nav-btn${active==='settings'?' active':''}" id="nav-set">⚙ Voz</button>
+  </div>
+</div>`;
+
+// ── HOME ──────────────────────────────────────────────────
+function homeHTML(){
+  const totalVocabWords=VOCAB_TOPICS.reduce((a,t)=>a+t.words.length,0);
+  const totalReadingQs=READING_PASSAGES.reduce((a,p)=>a+p.questions.length,0);
+  const totalReadingMastered=READING_PASSAGES.reduce((a,p)=>a+p.questions.filter(q=>getWordStatus('reading_'+p.id,q.q)==='mastered').length,0);
+  const totalVocabMastered=VOCAB_TOPICS.reduce((a,t)=>a+t.words.filter(([w])=>getWordStatus(t.id,w)==='mastered').length,0);
+  const totalGrammarQs=GRAMMAR_TOPICS.reduce((a,t)=>a+t.questions.length,0);
+  const totalGrammarMastered=GRAMMAR_TOPICS.reduce((a,t)=>a+t.questions.filter(q=>getWordStatus(t.id,q.q)==='mastered').length,0);
+
+  return hdr('home')+`<div class="main">
+    <div class="intro" style="margin-bottom:16px">
+      <h2>¿Qué quieres practicar?</h2>
+      <p>Choose a vocabulary topic or grammar structure. Words and questions move from <strong>New → Learning → Familiar → Mastered</strong> across sessions.</p>
+    </div>
+
+    <div class="stats-bar">
+      <div>
+        <div class="stats-big">${totalVocabMastered+totalGrammarMastered+totalReadingMastered}</div>
+        <div class="stats-sub">items mastered of ${totalVocabWords+totalGrammarQs+totalReadingQs} total</div>
+      </div>
+      <div style="flex:1">
+        <div style="height:7px;background:var(--cream-dark);border-radius:4px;overflow:hidden;margin-bottom:8px">
+          <div style="height:7px;background:var(--correct);border-radius:4px;width:${Math.round((totalVocabMastered+totalGrammarMastered+totalReadingMastered)/(totalVocabWords+totalGrammarQs+totalReadingQs)*100)}%"></div>
+        </div>
+        <div class="mastery-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--new)"></span>New</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--learning)"></span>Learning</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--familiar)"></span>Familiar</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--mastered)"></span>Mastered</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-header-title vocab">📖 Vocabulary</div>
+      <div class="section-header-line"></div>
+      <div style="font-size:11px;color:var(--muted)">${totalVocabMastered}/${totalVocabWords} mastered</div>
+    </div>
+    <div class="topic-grid">
+      ${VOCAB_TOPICS.map(t=>{
+        const stats=getTopicStats(t.id,t.words.map(w=>w[0]));
+        const badge=getTopicBadge(t.id,t.words.map(w=>w[0]));
+        return`<div class="topic-card" data-topic="${t.id}" data-mode="vocab">
+          <div class="topic-badge ${badge.cls}">${badge.label}</div>
+          <div class="topic-icon">${t.icon}</div>
+          <div class="topic-name">${t.label}</div>
+          <div class="topic-count">${t.words.length} words</div>
+          <div class="topic-mastery">
+            ${t.words.slice(0,10).map(([w])=>`<div class="mastery-pip ${getWordStatus(t.id,w)}"></div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+
+    <div class="section-header" style="margin-top:24px">
+      <div class="section-header-title" style="color:#1B6BB5">📄 Reading Comprehension</div>
+      <div class="section-header-line"></div>
+      <div style="font-size:11px;color:var(--muted)">${totalReadingMastered}/${totalReadingQs} mastered</div>
+    </div>
+    <div class="topic-grid">
+      ${READING_PASSAGES.map(p=>{
+        const keys=p.questions.map(q=>q.q);
+        const stats=getTopicStats('reading_'+p.id,keys);
+        const badge=getTopicBadge('reading_'+p.id,keys);
+        return`<div class="topic-card" style="border-color:#D8E8F0" data-topic="${p.id}" data-mode="reading"
+          onmouseover="this.style.borderColor='#1B6BB5'" onmouseout="this.style.borderColor='${badge.label==='Mastered ✓'?'var(--correct)':'#D8E8F0'}'">
+          <div class="topic-badge ${badge.cls}">${badge.label==='New'?'Reading':badge.label}</div>
+          <div class="topic-icon">${p.icon}</div>
+          <div class="topic-name">${p.type}</div>
+          <div class="topic-count">${p.questions.length} questions</div>
+          <div class="topic-mastery">
+            ${keys.map(k=>`<div class="mastery-pip ${getWordStatus('reading_'+p.id,k)}"></div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="section-header" style="margin-top:24px">
+      <div class="section-header-title grammar">✏️ Grammar</div>
+      <div class="section-header-line"></div>
+      <div style="font-size:11px;color:var(--muted)">${totalGrammarMastered}/${totalGrammarQs} mastered</div>
+    </div>
+    <div class="topic-grid">
+      ${GRAMMAR_TOPICS.map(t=>{
+        const keys=t.questions.map(q=>q.q);
+        const stats=getTopicStats(t.id,keys);
+        const badge=getTopicBadge(t.id,keys);
+        const badgeCls=badge.label==='New'?'badge-grammar':badge.cls;
+        return`<div class="topic-card grammar-card" data-topic="${t.id}" data-mode="grammar">
+          <div class="topic-badge ${badgeCls}">${badge.label==='New'?'Grammar':badge.label}</div>
+          <div class="topic-icon">${t.icon}</div>
+          <div class="topic-name">${t.label}</div>
+          <div class="topic-count">${t.questions.length} questions</div>
+          <div class="topic-mastery">
+            ${keys.slice(0,8).map(k=>`<div class="mastery-pip ${getWordStatus(t.id,k)}"></div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ── SESSION ───────────────────────────────────────────────
+function sessionHTML(){
+  const act=S.activities[S.current];
+  const pct=Math.round((S.current/S.activities.length)*100);
+  const topic=S.mode==='vocab'?VOCAB_TOPICS.find(t=>t.id===S.topicId):GRAMMAR_TOPICS.find(t=>t.id===S.topicId);
+  let bodyHTML='';
+  if(act.type==='grammar-mc'||act.type==='multiple-choice') bodyHTML=mcHTML(act);
+  else if(act.type==='audio-to-word') bodyHTML=audioHTML(act);
+  else if(act.type==='image-assoc') bodyHTML=imageHTML(act);
+  else if(act.type==='fill-blank') bodyHTML=fillHTML(act);
+  else if(act.type==='matching') bodyHTML=matchHTML(act);
+  const badgeCls=act.isGrammar?'grammar-badge':'';
+  return`${hdr('home')}
+  <div class="activity-header">
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <span class="strip-info">${topic.icon} ${topic.label}</span>
+    <span class="strip-score">${S.sessionCorrect}✓ ${S.current+1}/${S.activities.length}</span>
+  </div>
+  <div class="main">
+    <div class="activity-type-badge ${badgeCls}">${act.isGrammar?'✏️':actIcon(act.type,act.listenMode)} ${act.actLabel}</div>
+    ${bodyHTML}
+  </div>`;
+}
+
+function actIcon(type,listenMode){
+  if(type==='audio-to-word')return'🔊';if(type==='image-assoc')return'🖼️';
+  if(type==='matching')return listenMode?'🔊':'🔗';if(type==='fill-blank')return'✍️';return'❓';
+}
+
+function mcHTML(act){
+  const LETTERS=['A','B','C','D'];
+  return`${act.isGrammar&&act.question?`<div class="q-text">${act.question}</div>`:`<div class="q-text">${act.question}</div>`}
+  <div class="options-grid">
+    ${act.options.map((opt,i)=>{
+      let cls='';if(S.answered){if(i===act.correct)cls='correct';else if(i===S.chosen&&i!==act.correct)cls='wrong';}
+      return`<button class="option ${cls}" data-opt="${i}" ${S.answered?'disabled':''}><span class="opt-letter">${LETTERS[i]}</span>${opt}</button>`;
+    }).join('')}
+  </div>${feedbackHTML(act)}`;
+}
+
+function audioHTML(act){
+  const LETTERS=['A','B','C','D'];
+  return`<div class="audio-prompt" id="audio-btn" data-speak="${act.word}">
+    <div class="audio-icon">🔊</div><div class="audio-word">${act.word}</div>
+    <div class="audio-hint">Tap to hear the word</div>
+  </div>
+  <div class="q-text" style="font-size:15px">${act.question}</div>
+  <div class="options-grid two-col">
+    ${act.options.map((opt,i)=>{
+      let cls='';if(S.answered){if(i===act.correct)cls='correct';else if(i===S.chosen&&i!==act.correct)cls='wrong';}
+      return`<button class="option ${cls}" data-opt="${i}" ${S.answered?'disabled':''}><span class="opt-letter">${LETTERS[i]}</span>${opt}</button>`;
+    }).join('')}
+  </div>${feedbackHTML(act)}`;
+}
+
+function imageHTML(act){
+  const LETTERS=['A','B','C','D'];
+  return`<div class="image-card">${act.image}<div class="image-label">${act.imageLabel}</div></div>
+  <div class="q-text" style="font-size:15px">${act.question}</div>
+  <div class="options-grid two-col">
+    ${act.options.map((opt,i)=>{
+      let cls='';if(S.answered){if(i===act.correct)cls='correct';else if(i===S.chosen&&i!==act.correct)cls='wrong';}
+      return`<button class="option ${cls}" data-opt="${i}" ${S.answered?'disabled':''}><span class="opt-letter">${LETTERS[i]}</span>${opt}</button>`;
+    }).join('')}
+  </div>${feedbackHTML(act)}`;
+}
+
+function fillHTML(act){
+  let cls='';if(S.answered){const ok=S.fillValue.trim().toLowerCase()===act.answer.toLowerCase();cls=ok?'correct':'wrong';}
+  return`<div class="q-text">${act.question}</div>
+  <input class="blank-input ${cls}" id="fill-input" type="text" placeholder="Type in Spanish…" value="${S.fillValue}" ${S.answered?'disabled':''}/>
+  ${!S.answered?`<button class="submit-btn" id="fill-submit">Check →</button>`:''}
+  ${S.answered?fillFeedbackHTML(act):''}`;
+}
+
+function fillFeedbackHTML(act){
+  const ok=S.fillValue.trim().toLowerCase()===act.answer.toLowerCase();
+  return`<div class="feedback ${ok?'correct-fb':'wrong-fb'}"><strong>${ok?'¡Correcto!':'Not quite.'}</strong>${ok?'':` The answer is <strong>${act.answer}</strong>.`}</div>
+  <button class="next-btn" id="next-btn">${S.current<S.activities.length-1?'Siguiente →':'Ver resultados →'}</button>`;
+}
+
+function matchHTML(act){
+  const pairs=act.pairs;const leftWords=pairs.map(p=>p[0]);
+  if(!act._rightWords)act._rightWords=shuffle(pairs.map(p=>p[1]));
+  if(!act._heard)act._heard={};
+  const rights=act._rightWords;const listenMode=act.listenMode;
+  return`<div class="q-text" style="font-size:15px">${listenMode?'Tap each card to <strong>hear</strong> the Spanish, then match to its English meaning.':'Match each Spanish word to its English meaning.'}</div>
+  <div class="match-progress">${S.matchedPairs.length} / ${pairs.length} matched</div>
+  <div class="match-grid">
+    <div><div class="match-col-label">${listenMode?'Tap to hear 🔊':'Español'}</div>
+      ${leftWords.map((w,i)=>{
+        const isMatched=S.matchedPairs.some(mp=>mp[0]===i);const isSelected=S.matchLeft===i;const isWrong=S.wrongFlash==='L'+i;
+        if(listenMode){const heard=act._heard[i];return`<div class="match-card${isMatched?' matched':isSelected?' selected':isWrong?' wrong-flash':''}" data-left="${i}" data-speak="${w}" style="margin-bottom:7px;flex-direction:column;gap:4px;padding:10px 8px;min-height:60px">${isMatched?`<span>✓</span><span style="font-size:11px;color:var(--correct);font-weight:500">${w}</span>`:`<span style="font-size:22px">${heard?'🔊':'🔈'}</span><span style="font-size:10px;color:${isSelected?'var(--navy)':'var(--muted)'}">${heard?'tap to replay':'tap to hear'}</span>`}</div>`;}
+        return`<div class="match-card${isMatched?' matched':isSelected?' selected':isWrong?' wrong-flash':''}" data-left="${i}" style="margin-bottom:7px">${w}</div>`;
+      }).join('')}
+    </div>
+    <div><div class="match-col-label">English</div>
+      ${rights.map((w,i)=>{
+        const isMatched=S.matchedPairs.some(mp=>mp[1]===i);const isSelected=S.matchRight===i;const isWrong=S.wrongFlash==='R'+i;
+        return`<div class="match-card${isMatched?' matched':isSelected?' selected':isWrong?' wrong-flash':''}" data-right="${i}" style="margin-bottom:7px">${w}</div>`;
+      }).join('')}
+    </div>
+  </div>
+  ${S.matchedPairs.length===pairs.length?`<div class="feedback correct-fb"><strong>¡Perfecto!</strong> All pairs matched.</div><button class="next-btn" id="next-btn">${S.current<S.activities.length-1?'Siguiente →':'Ver resultados →'}</button>`:''}`;
+}
+
+function feedbackHTML(act){
+  if(!S.answered)return'';
+  const ok=S.chosen===act.correct;
+  const wrongLabel=act.options?act.options[act.correct]:act.answer;
+  return`<div class="feedback ${ok?'correct-fb':'wrong-fb'}"><strong>${ok?'¡Correcto!':'Not quite.'}</strong>${ok?'':` The answer is <strong>${wrongLabel}</strong>.`}${act.explanation?`<br><span style="margin-top:4px;display:block">${act.explanation}</span>`:''}</div>
+  <button class="next-btn" id="next-btn">${S.current<S.activities.length-1?'Siguiente →':'Ver resultados →'}</button>`;
+}
+
+// ── RESULT ────────────────────────────────────────────────
+function resultHTML(){
+  const total=S.activities.length,pct=Math.round((S.sessionCorrect/total)*100);
+  const msg=pct>=80?'¡Excelente!':pct>=60?'¡Buen trabajo!':'¡Sigue practicando!';
+  const topic=S.mode==='vocab'?VOCAB_TOPICS.find(t=>t.id===S.topicId):GRAMMAR_TOPICS.find(t=>t.id===S.topicId);
+  const keys=S.mode==='vocab'?topic.words.map(w=>w[0]):topic.questions.map(q=>q.q);
+  const stats=getTopicStats(S.topicId,keys);
+  return`${hdr('home')}
+  <div class="result-header">
+    <div class="result-score">${pct}<span>%</span></div>
+    <div class="result-msg">${msg} · ${topic.icon} ${topic.label}</div>
+  </div>
+  <div class="main">
+    <div class="stat-row">
+      <div class="stat-cell"><div class="stat-val" style="color:var(--correct)">${S.sessionCorrect}</div><div class="stat-lbl">Correct</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--wrong)">${total-S.sessionCorrect}</div><div class="stat-lbl">Incorrect</div></div>
+      <div class="stat-cell"><div class="stat-val">${pct}%</div><div class="stat-lbl">Score</div></div>
+    </div>
+    <div class="section-label">Progress after this session</div>
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      ${['new','learning','familiar','mastered'].map(s=>`<div style="flex:1;text-align:center;padding:10px 6px;background:var(--cream);border-radius:var(--rs)">
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--${s==='new'?'muted':s==='learning'?'gold':s==='familiar'?'familiar':'correct'})">${stats[s]}</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px">${s}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:var(--cream);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+      Items are <strong style="color:var(--correct)">Mastered</strong> after 3 correct answers across 2+ different sessions. Come back tomorrow!
+    </div>
+    <button class="primary-btn" id="retry-btn"><span class="gold-bar"></span>Practice this topic again</button>
+    <button class="secondary-btn" id="home-btn" style="margin-top:8px">Choose a different topic</button>
+  </div>`;
+}
+
+// ── PROGRESS ──────────────────────────────────────────────
+function progressHTML(){
+  const vocabStats={new:0,learning:0,familiar:0,mastered:0};
+  VOCAB_TOPICS.forEach(t=>t.words.forEach(([w])=>vocabStats[getWordStatus(t.id,w)]++));
+  const grammarStats={new:0,learning:0,familiar:0,mastered:0};
+  GRAMMAR_TOPICS.forEach(t=>t.questions.forEach(q=>grammarStats[getWordStatus(t.id,q.q)]++));
+  const total=Object.values(vocabStats).reduce((a,b)=>a+b)+Object.values(grammarStats).reduce((a,b)=>a+b);
+
+  return`${hdr('progress')}<div class="main">
+    <div class="intro" style="margin-bottom:16px"><h2>Mi progreso</h2>
+    <p>Mastery = 3 correct answers across 2+ different sessions.</p></div>
+
+    <div class="section-header"><div class="section-header-title vocab">📖 Vocabulary</div><div class="section-header-line"></div></div>
+    ${VOCAB_TOPICS.map(t=>{
+      const s=getTopicStats(t.id,t.words.map(w=>w[0]));const pct=Math.round(s.mastered/t.words.length*100);
+      return`<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:500;color:var(--navy)">${t.icon} ${t.label}</div>
+          <div style="font-size:11px;color:var(--muted)">${s.mastered}/${t.words.length}</div>
+        </div>
+        <div style="height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden;display:flex">
+          <div style="width:${Math.round(s.mastered/t.words.length*100)}%;background:var(--correct)"></div>
+          <div style="width:${Math.round(s.familiar/t.words.length*100)}%;background:var(--familiar)"></div>
+          <div style="width:${Math.round(s.learning/t.words.length*100)}%;background:var(--gold)"></div>
+        </div>
+      </div>`;
+    }).join('')}
+
+    <div class="section-header" style="margin-top:20px"><div class="section-header-title grammar">✏️ Grammar</div><div class="section-header-line"></div></div>
+    ${GRAMMAR_TOPICS.map(t=>{
+      const keys=t.questions.map(q=>q.q);const s=getTopicStats(t.id,keys);
+      return`<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:500;color:var(--navy)">${t.icon} ${t.label}</div>
+          <div style="font-size:11px;color:var(--muted)">${s.mastered}/${t.questions.length}</div>
+        </div>
+        <div style="height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden;display:flex">
+          <div style="width:${Math.round(s.mastered/keys.length*100)}%;background:var(--mastered)"></div>
+          <div style="width:${Math.round(s.familiar/keys.length*100)}%;background:var(--familiar)"></div>
+          <div style="width:${Math.round(s.learning/keys.length*100)}%;background:var(--learning)"></div>
+        </div>
+      </div>`;
+    }).join('')}
+    <div class="section-header" style="margin-top:20px"><div class="section-header-title" style="color:#1B6BB5">📄 Reading</div><div class="section-header-line"></div></div>
+    ${READING_PASSAGES.map(p=>{
+      const keys=p.questions.map(q=>q.q);const s=getTopicStats('reading_'+p.id,keys);
+      return`<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:500;color:var(--navy)">${p.icon} ${p.type}</div>
+          <div style="font-size:11px;color:var(--muted)">${s.mastered}/${p.questions.length}</div>
+        </div>
+        <div style="height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden;display:flex">
+          <div style="width:${Math.round(s.mastered/p.questions.length*100)}%;background:#1B6BB5"></div>
+          <div style="width:${Math.round(s.familiar/p.questions.length*100)}%;background:var(--familiar)"></div>
+          <div style="width:${Math.round(s.learning/p.questions.length*100)}%;background:var(--gold)"></div>
+        </div>
+      </div>`;
+    }).join('')}
+    <button class="secondary-btn" id="clear-btn" style="margin-top:10px;border-color:#E8D4D4;color:var(--wrong)">Reset all progress</button>
+  </div>`;
+}
+
+
+// ── GRAMMAR CONCEPT INTRO ─────────────────────────────────
+function conceptHTML(){
+  const topic = GRAMMAR_TOPICS.find(t=>t.id===S.topicId);
+  const concept = GRAMMAR_CONCEPTS[S.topicId];
+  if(!concept) { startSession(S.topicId, S.mode); return ''; }
+  return hdr('home')+`<div class="main">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--grammar-light);border-radius:20px;padding:5px 14px;margin-bottom:16px">
+      <span style="font-size:16px">${topic.icon}</span>
+      <span style="font-size:11px;font-weight:500;color:var(--grammar-accent);letter-spacing:.08em;text-transform:uppercase">Grammar Concept</span>
+    </div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:10px">${concept.title}</h2>
+    <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:20px">${concept.summary}</p>
+
+    <div style="background:var(--cream);border-radius:var(--r);padding:16px 18px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Examples</div>
+      ${concept.examples.map(([es,en])=>`
+        <div style="margin-bottom:10px">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:2px">${es}</div>
+          ${en?`<div style="font-size:12px;color:var(--muted);font-style:italic">${en}</div>`:''}
+        </div>`).join('')}
+    </div>
+
+    ${concept.tip?`<div style="background:var(--grammar-light);border-left:3px solid var(--grammar-accent);border-radius:var(--rs);padding:12px 14px;margin-bottom:24px;font-size:13px;color:var(--navy);line-height:1.6">
+      <strong style="color:var(--grammar-accent)">💡 Tip:</strong> ${concept.tip}
+    </div>`:''}
+
+    <button class="primary-btn" id="start-practice-btn">
+      <span class="gold-bar"></span>Start practicing →
+    </button>
+    <button class="secondary-btn" id="skip-concept-btn" style="margin-top:8px">
+      I already know this — skip intro
+    </button>
+  </div>`;
+}
+
+
+// ── READING COMPREHENSION ────────────────────────────────
+function readingHTML(){
+  const p = S.readingPassage;
+  if(!p) { S.screen='home'; render(); return ''; }
+
+  // Show result if all questions done
+  if(S.readingQ >= p.questions.length) {
+    return readingResultHTML(p);
+  }
+
+  const q = p.questions[S.readingQ];
+  const pct = Math.round((S.readingQ / p.questions.length)*100);
+  const LETTERS = ['A','B','C','D'];
+
+  return `${hdr('home')}
+  <div class="activity-header">
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <span class="strip-info">${p.icon} ${p.type}</span>
+    <span class="strip-score">${S.readingScore}✓ ${S.readingQ+1}/${p.questions.length}</span>
+  </div>
+  <div class="main">
+    <div class="activity-type-badge" style="background:#EBF3FC;color:#1B6BB5">📄 Reading Comprehension</div>
+
+    <!-- English context -->
+    <div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:8px">
+      <strong style="color:var(--navy);font-style:normal">Context:</strong> ${p.contextEng}
+    </div>
+
+    <!-- Authentic Spanish text -->
+    <div style="background:var(--cream);border:1px solid #D8E8F0;border-left:3px solid #1B6BB5;border-radius:var(--rs);padding:14px 16px;margin-bottom:18px;font-family:monospace;font-size:13px;color:var(--navy);line-height:1.7;white-space:pre-wrap;overflow-x:auto">${p.text}</div>
+
+    <!-- Question -->
+    <div class="q-text" style="font-size:16px">${q.q}</div>
+    <div class="options-grid">
+      ${q.opts.map((opt,i)=>{
+        let cls='';
+        if(S.readingAnswered){if(i===q.ans)cls='correct';else if(i===S.readingChosen&&i!==q.ans)cls='wrong';}
+        return `<button class="option ${cls}" data-ropt="${i}" ${S.readingAnswered?'disabled':''}>
+          <span class="opt-letter">${LETTERS[i]}</span>${opt}</button>`;
+      }).join('')}
+    </div>
+
+    ${S.readingAnswered ? `
+      <div class="feedback ${S.readingChosen===q.ans?'correct-fb':'wrong-fb'}">
+        <strong>${S.readingChosen===q.ans?'¡Correcto!':'Not quite.'}</strong>
+        ${S.readingChosen!==q.ans?` The answer is <strong>${q.opts[q.ans]}</strong>.`:''}
+        <br><span style="margin-top:4px;display:block">${q.exp}</span>
+      </div>
+      <button class="next-btn" id="reading-next">
+        ${S.readingQ<p.questions.length-1?'Next question →':'Ver resultados →'}
+      </button>
+    ` : ''}
+  </div>`;
+}
+
+function readingResultHTML(p){
+  const pct = Math.round((S.readingScore/p.questions.length)*100);
+  const msg = pct>=80?'¡Excelente!':pct>=60?'¡Buen trabajo!':'¡Sigue practicando!';
+  const color = pct>=80?'var(--correct)':pct>=60?'var(--gold)':'var(--wrong)';
+  return `${hdr('home')}
+  <div class="result-header">
+    <div class="result-score">${pct}<span>%</span></div>
+    <div class="result-msg">${msg} · ${p.icon} ${p.type}</div>
+  </div>
+  <div class="main">
+    <div class="stat-row">
+      <div class="stat-cell"><div class="stat-val" style="color:var(--correct)">${S.readingScore}</div><div class="stat-lbl">Correct</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--wrong)">${p.questions.length-S.readingScore}</div><div class="stat-lbl">Incorrect</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:${color}">${pct}%</div><div class="stat-lbl">Score</div></div>
+    </div>
+    <button class="primary-btn" id="reading-retry"><span class="gold-bar"></span>Read again</button>
+    <button class="secondary-btn" id="home-btn" style="margin-top:8px">Choose a different topic</button>
+  </div>`;
+}
+
+// ── SETTINGS ──────────────────────────────────────────────
+function settingsHTML(){
+  const voices=getSpanishVoices();const savedVoice=localStorage.getItem('nsa_voice')||'';const savedRate=getSavedRate();
+  return`${hdr('settings')}<div class="main">
+    <div class="intro" style="margin-bottom:18px"><h2>Voice Settings</h2>
+    <p>Choose the Spanish voice that sounds most natural on your device. Tap a voice to hear a preview.</p></div>
+    ${voices.length===0?`<div style="background:var(--warn-bg,#FEF3E2);border:1px solid #B35A00;border-radius:var(--rs);padding:14px 16px;font-size:13px;color:#B35A00">No Spanish voices found. Try Chrome, or install a Spanish language pack in your system settings.</div>`:`
+    <div class="section-label">Spanish voices (${voices.length} found)</div>
+    ${voices.map(v=>{
+      const isSel=savedVoice?v.name===savedVoice:v===getSavedVoice();
+      const country=v.lang.split('-')[1]||'';
+      const flag={ES:'🇪🇸',MX:'🇲🇽',US:'🇺🇸',AR:'🇦🇷',CO:'🇨🇴',CL:'🇨🇱',PE:'🇵🇪',VE:'🇻🇪'}[country]||'🌎';
+      return`<div class="voice-card${isSel?' selected':''}" data-voice="${v.name}" data-preview="Hola, me llamo ${v.name.split(' ')[0]}. Vamos a practicar español juntos.">
+        <span style="font-size:20px">${flag}</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--navy)">${v.name}${isSel?' ✓':''}</div>
+        <div style="font-size:11px;color:var(--muted)">${v.lang}${v.localService?' · on device':' · online'}</div></div>
+        <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:${isSel?'var(--gold)':'var(--cream-dark)'};color:${isSel?'#fff':'var(--muted)'}">
+          ${isSel?'Selected':'Tap to try'}</span>
+      </div>`;
+    }).join('')}
+    <div class="section-label" style="margin-top:18px">Speaking speed</div>
+    <div style="background:var(--cream);border-radius:var(--rs);padding:16px">
+      <input id="rate-slider" type="range" min="0.6" max="1.15" step="0.05" value="${savedRate}" style="width:100%;accent-color:var(--gold);margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>Slow</span><span>Normal</span><span>Fast</span></div>
+      <div style="text-align:center;margin-top:10px">
+        <button onclick="speak('Buenos días. Hola, ¿cómo estás? Vamos a practicar vocabulario en español.')" style="padding:8px 18px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-family:inherit;font-size:13px;cursor:pointer">🔊 Test current settings</button>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">Tip: "On device" voices work offline and usually sound more natural.</p>
+    `}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// BIND
+// ═══════════════════════════════════════════════════════════
+function bind(){
+  document.getElementById('nav-home')?.addEventListener('click',()=>{S.screen='home';render();});
+  document.getElementById('nav-prog')?.addEventListener('click',()=>{S.screen='progress';render();});
+  document.getElementById('nav-set')?.addEventListener('click',()=>{S.screen='settings';render();});
+  document.querySelectorAll('[data-topic]').forEach(c=>c.addEventListener('click',()=>{
+    const mode = c.dataset.mode;
+    const topicId = c.dataset.topic;
+    if(mode==='grammar') {
+      S.topicId = topicId; S.mode = mode;
+      S.screen = 'concept'; render();
+    } else if(mode==='reading') {
+      S.topicId = topicId; S.mode = 'reading';
+      S.screen = 'reading'; S.readingPassage = READING_PASSAGES.find(p=>p.id===topicId);
+      S.readingQ = 0; S.readingScore = 0; S.readingAnswered = false; S.readingChosen = null;
+      render();
+    } else {
+      startSession(topicId, mode);
+    }
+  }));
+  document.getElementById('start-practice-btn')?.addEventListener('click',()=>startSession(S.topicId,S.mode));
+  document.getElementById('skip-concept-btn')?.addEventListener('click',()=>startSession(S.topicId,S.mode));
+  document.querySelectorAll('[data-opt]').forEach(b=>b.addEventListener('click',()=>answerMC(+b.dataset.opt)));
+  document.getElementById('audio-btn')?.addEventListener('click',function(){speak(this.dataset.speak);});
+  const fi=document.getElementById('fill-input');
+  if(fi){fi.addEventListener('input',e=>{S.fillValue=e.target.value;});fi.addEventListener('keydown',e=>{if(e.key==='Enter')submitFill();});}
+  document.getElementById('fill-submit')?.addEventListener('click',submitFill);
+  document.querySelectorAll('[data-left]').forEach(c=>c.addEventListener('click',()=>{
+    const act=S.activities[S.current];const i=+c.dataset.left;
+    const word=act.listenMode?c.dataset.speak:act.pairs[i][0];
+    if(word)speak(word);if(act.listenMode)act._heard[i]=true;
+    matchSelectLeft(i);
+  }));
+  document.querySelectorAll('[data-right]').forEach(c=>c.addEventListener('click',()=>matchSelectRight(+c.dataset.right)));
+  document.getElementById('next-btn')?.addEventListener('click',nextActivity);
+  document.getElementById('retry-btn')?.addEventListener('click',()=>startSession(S.topicId,S.mode));
+  document.getElementById('home-btn')?.addEventListener('click',()=>{S.screen='home';render();});
+  document.querySelectorAll('[data-ropt]').forEach(b=>b.addEventListener('click',()=>{
+    if(S.readingAnswered) return;
+    const i=+b.dataset.ropt; const p=S.readingPassage; const q=p.questions[S.readingQ];
+    S.readingAnswered=true; S.readingChosen=i;
+    if(i===q.ans){ S.readingScore++; recordAnswer('reading_'+p.id,q.q,true,S.sessionDate); }
+    else recordAnswer('reading_'+p.id,q.q,false,S.sessionDate);
+    render();
+  }));
+  document.getElementById('reading-next')?.addEventListener('click',()=>{
+    S.readingQ++; S.readingAnswered=false; S.readingChosen=null; render();
+  });
+  document.getElementById('reading-retry')?.addEventListener('click',()=>{
+    S.readingQ=0; S.readingScore=0; S.readingAnswered=false; S.readingChosen=null; render();
+  });
+  document.getElementById('clear-btn')?.addEventListener('click',()=>{if(confirm('Reset all progress? This cannot be undone.')){localStorage.removeItem('nsa_mastery');render();}});
+  document.querySelectorAll('[data-voice]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('nsa_voice',b.dataset.voice);speak(b.dataset.preview||'hola');render();}));
+  document.getElementById('rate-slider')?.addEventListener('input',e=>localStorage.setItem('nsa_rate',e.target.value));
+}
+
+// ═══════════════════════════════════════════════════════════
+// SESSION LOGIC
+// ═══════════════════════════════════════════════════════════
+function startSession(topicId,mode){
+  S.topicId=topicId;S.mode=mode;
+  if(mode==='grammar'){const t=GRAMMAR_TOPICS.find(t=>t.id===topicId);S.activities=buildGrammarSession(t);}
+  else{const t=VOCAB_TOPICS.find(t=>t.id===topicId);S.activities=buildVocabSession(t);}
+  S.current=0;S.sessionCorrect=0;S.sessionDate=todayStr();
+  S.answered=false;S.chosen=null;S.fillValue='';
+  S.matchLeft=null;S.matchRight=null;S.matchedPairs=[];S.wrongFlash=null;
+  S.screen='session';render();
+  const act=S.activities[0];
+  if(act.type==='audio-to-word')setTimeout(()=>speak(act.word),400);
+  if(act.type==='matching'&&act.listenMode)setTimeout(()=>{speak(act.pairs[0][0]);act._heard[0]=true;render();},400);
+}
+
+function answerMC(i){
+  if(S.answered)return;
+  const act=S.activities[S.current];S.answered=true;S.chosen=i;
+  const ok=i===act.correct;if(ok)S.sessionCorrect++;
+  recordAnswer(S.topicId,act.word,ok,S.sessionDate);render();
+}
+
+function submitFill(){
+  if(S.answered)return;
+  const act=S.activities[S.current];S.answered=true;
+  const ok=S.fillValue.trim().toLowerCase()===act.answer.toLowerCase();
+  if(ok)S.sessionCorrect++;recordAnswer(S.topicId,act.word,ok,S.sessionDate);render();
+}
+
+function matchSelectLeft(i){
+  const act=S.activities[S.current];
+  if(S.matchedPairs.some(mp=>mp[0]===i))return;
+  S.matchLeft=i;S.wrongFlash=null;
+  if(S.matchRight!==null)tryMatch(act);else render();
+}
+
+function matchSelectRight(i){
+  const act=S.activities[S.current];
+  if(S.matchedPairs.some(mp=>mp[1]===i))return;
+  S.matchRight=i;S.wrongFlash=null;
+  if(S.matchLeft!==null)tryMatch(act);else render();
+}
+
+function tryMatch(act){
+  const li=S.matchLeft,ri=S.matchRight;
+  const leftWord=act.pairs[li][0];const rightWord=act._rightWords[ri];
+  const ok=act.pairs.find(p=>p[0]===leftWord&&p[1]===rightWord);
+  if(ok){S.matchedPairs.push([li,ri]);recordAnswer(S.topicId,leftWord,true,S.sessionDate);if(S.matchedPairs.length===act.pairs.length)S.sessionCorrect++;}
+  else{recordAnswer(S.topicId,leftWord,false,S.sessionDate);S.wrongFlash='L'+li;setTimeout(()=>{S.wrongFlash=null;S.matchLeft=null;S.matchRight=null;render();},700);}
+  S.matchLeft=null;S.matchRight=null;render();
+}
+
+function nextActivity(){
+  if(S.current<S.activities.length-1){
+    S.current++;S.answered=false;S.chosen=null;S.fillValue='';
+    S.matchLeft=null;S.matchRight=null;S.matchedPairs=[];S.wrongFlash=null;
+    render();
+    const act=S.activities[S.current];
+    if(act.type==='audio-to-word')setTimeout(()=>speak(act.word),400);
+    if(act.type==='matching'&&act.listenMode)setTimeout(()=>{speak(act.pairs[0][0]);act._heard[0]=true;render();},400);
+  }else{S.screen='result';render();}
+}
+
+render();
+</script>
+</body>
+</html>
