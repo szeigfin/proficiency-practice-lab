@@ -1,4 +1,3 @@
-es · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -683,7 +682,7 @@ window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
  
 function render(){const app=document.getElementById('app');const screens={home:homeHTML,concept:conceptHTML,reading:readingHTML,session:sessionHTML,result:resultHTML,progress:progressHTML,settings:settingsHTML};(screens[S.screen]||homeHTML)().then?null:(app.innerHTML=(screens[S.screen]||homeHTML)());bind();}
  
-const hdr=a=>`<div class="header"><div class="header-left"><span class="h-title">Practica</span><span class="h-sub">Nivel Tres · Spanish 3</span></div><div class="h-nav"><button class="nav-btn${a==='home'?' active':''}" id="nav-home">Inicio</button><button class="nav-btn${a==='progress'?' active':''}" id="nav-prog">Progreso</button><button class="nav-btn${a==='settings'?' active':''}" id="nav-set">&#9881; Voz</button></div></div>`;
+const hdr=a=>`<div class="header"><div class="header-left"><span class="h-title">Practica</span><span class="h-sub">Nivel Tres · Spanish 3</span></div><div class="h-nav"><button class="nav-btn" id="nav-hub">&#8592; Hub</button><button class="nav-btn${a==='home'?' active':''}" id="nav-home">Inicio</button><button class="nav-btn${a==='progress'?' active':''}" id="nav-prog">Progreso</button><button class="nav-btn${a==='settings'?' active':''}" id="nav-set">&#9881; Voz</button></div></div>`;
  
 function homeHTML(){
   const tV=VOCAB_TOPICS.reduce((a,t)=>a+t.words.length,0),mV=VOCAB_TOPICS.reduce((a,t)=>a+t.words.filter(([w])=>getWordStatus(t.id,w)==='mastered').length,0);
@@ -800,6 +799,7 @@ function settingsHTML(){
   </div>`;}
  
 function bind(){
+  document.getElementById('nav-hub')?.addEventListener('click',()=>{window.location.href='/proficiency-practice-lab/';});
   document.getElementById('nav-home')?.addEventListener('click',()=>{S.screen='home';render();});
   document.getElementById('nav-prog')?.addEventListener('click',()=>{S.screen='progress';render();});
   document.getElementById('nav-set')?.addEventListener('click',()=>{S.screen='settings';render();});
