@@ -1,0 +1,851 @@
+es · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practica · Nivel Tres</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1B2A4A;--navy-light:#243558;--gold:#C9973A;--gold-light:#E8B85A;--cream:#FAF8F3;--cream-dark:#F0EDE4;--text:#1B2A4A;--muted:#6B7A94;--correct:#2E7D52;--correct-bg:#EAF5EE;--wrong:#B33A3A;--wrong-bg:#FAEAEA;--new:#6B7A94;--learning:#C9973A;--familiar:#1B6BB5;--mastered:#2E7D52;--grammar-accent:#5B3A8C;--grammar-light:#EDE8F7;--r:12px;--rs:8px;}
+html,body{min-height:100vh;background:#E8E4DA;font-family:'DM Sans',sans-serif;color:var(--text)}
+.app{max-width:720px;margin:0 auto;min-height:100vh;background:#fff;box-shadow:0 0 60px rgba(0,0,0,.12)}
+.header{background:var(--navy);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
+.header-left{display:flex;align-items:baseline;gap:10px}
+.h-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:#fff}
+.h-sub{font-size:11px;color:var(--gold-light);font-weight:300;letter-spacing:.08em;text-transform:uppercase}
+.h-nav{display:flex;gap:5px}
+.nav-btn{padding:5px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.nav-btn:hover,.nav-btn.active{background:var(--gold);border-color:var(--gold);color:#fff}
+.main{padding:22px 24px 40px}
+.intro h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;margin-bottom:6px}
+.intro p{font-size:13px;color:var(--muted);font-weight:300;line-height:1.6}
+.stats-bar{background:var(--cream);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.stats-big{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);flex-shrink:0}
+.stats-sub{font-size:11px;color:var(--muted)}
+.mastery-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.section-header{display:flex;align-items:center;gap:10px;margin:20px 0 10px}
+.section-header-line{flex:1;height:.5px;background:var(--cream-dark)}
+.section-header-title{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.topic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.topic-card{background:#fff;border:1px solid #E8E4DA;border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.topic-card:hover{border-color:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.07)}
+.topic-card.grammar-card{border-color:#DDD8EE}
+.topic-card.grammar-card:hover{border-color:var(--grammar-accent)}
+.topic-icon{font-size:20px;margin-bottom:6px}
+.topic-name{font-size:12px;font-weight:500;color:var(--navy);line-height:1.3}
+.topic-count{font-size:11px;color:var(--muted);margin-top:2px}
+.topic-mastery{display:flex;gap:2px;margin-top:8px;flex-wrap:wrap}
+.mastery-pip{height:4px;flex:1;min-width:4px;border-radius:2px;background:var(--cream-dark)}
+.mastery-pip.new{background:var(--new)}.mastery-pip.learning{background:var(--learning)}.mastery-pip.familiar{background:var(--familiar)}.mastery-pip.mastered{background:var(--mastered)}
+.topic-badge{position:absolute;top:8px;right:8px;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:500}
+.badge-mastered{background:var(--correct-bg);color:var(--correct)}.badge-learning{background:#FDF8EF;color:var(--gold)}.badge-new{background:var(--cream-dark);color:var(--muted)}.badge-grammar{background:var(--grammar-light);color:var(--grammar-accent)}
+.activity-header{background:var(--navy);padding:12px 24px;display:flex;align-items:center;gap:12px}
+.progress-track{flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:2px}
+.progress-fill{height:3px;background:var(--gold);border-radius:2px;transition:width .4s}
+.strip-info{font-size:11px;color:rgba(255,255,255,.6);white-space:nowrap;font-weight:300}
+.strip-score{font-size:11px;color:var(--gold-light);white-space:nowrap;font-weight:500}
+.activity-type-badge{display:inline-flex;align-items:center;gap:6px;background:var(--cream-dark);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.06em}
+.activity-type-badge.grammar-badge{background:var(--grammar-light);color:var(--grammar-accent)}
+.q-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:var(--navy);line-height:1.5;margin-bottom:18px}
+.options-grid{display:grid;gap:8px}.options-grid.two-col{grid-template-columns:1fr 1fr}
+.option{width:100%;text-align:left;padding:12px 16px;border:1px solid #D8D4C8;border-radius:var(--rs);background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);display:flex;align-items:center;gap:11px;transition:all .15s}
+.option:hover:not(:disabled){border-color:var(--navy);background:var(--cream)}
+.opt-letter{width:24px;height:24px;border-radius:50%;border:1px solid #D8D4C8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;color:var(--muted)}
+.option.correct{border-color:var(--correct);background:var(--correct-bg)}.option.correct .opt-letter{background:var(--correct);border-color:var(--correct);color:#fff}
+.option.wrong{border-color:var(--wrong);background:var(--wrong-bg)}.option.wrong .opt-letter{background:var(--wrong);border-color:var(--wrong);color:#fff}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match-col-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;text-align:center}
+.match-card{padding:11px 12px;border:1.5px solid #D8D4C8;border-radius:var(--rs);background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);text-align:center;transition:all .15s;min-height:48px;display:flex;align-items:center;justify-content:center;line-height:1.3}
+.match-card:hover{border-color:var(--navy);background:var(--cream)}.match-card.selected{border-color:var(--gold);background:#FDF8EF;font-weight:500}.match-card.matched{border-color:var(--correct);background:var(--correct-bg);color:var(--correct);cursor:default}.match-card.wrong-flash{border-color:var(--wrong);background:var(--wrong-bg)}
+.match-progress{text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px}
+.audio-prompt{background:var(--navy);border-radius:var(--r);padding:26px 24px;text-align:center;margin-bottom:20px;cursor:pointer;transition:background .15s}
+.audio-prompt:hover{background:var(--navy-light)}
+.audio-icon{font-size:34px;margin-bottom:8px}.audio-word{font-family:'Playfair Display',serif;font-size:24px;color:#fff;margin-bottom:4px}.audio-hint{font-size:12px;color:rgba(255,255,255,.5)}
+.feedback{background:var(--cream-dark);border-radius:var(--rs);padding:11px 14px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:6px}
+.feedback strong{color:var(--navy);font-weight:500}.feedback.correct-fb{background:var(--correct-bg);border-left:3px solid var(--correct)}.feedback.wrong-fb{background:var(--wrong-bg);border-left:3px solid var(--wrong)}
+.next-btn{margin-top:14px;padding:11px 24px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+.next-btn:hover{background:var(--navy-light)}
+.blank-input{width:100%;padding:12px 16px;border:1.5px solid #D8D4C8;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:16px;color:var(--navy);background:#fff;margin-bottom:10px;transition:border-color .15s}
+.blank-input:focus{outline:none;border-color:var(--navy)}.blank-input.correct{border-color:var(--correct);background:var(--correct-bg)}.blank-input.wrong{border-color:var(--wrong);background:var(--wrong-bg)}
+.submit-btn{padding:11px 24px;background:var(--gold);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer}
+.submit-btn:hover{background:#B8832E}
+.result-header{background:var(--navy);padding:28px 24px 22px;text-align:center;border-bottom:3px solid var(--gold)}
+.result-score{font-family:'Playfair Display',serif;font-size:52px;font-weight:600;color:#fff;line-height:1}.result-score span{color:var(--gold)}
+.result-msg{font-size:12px;color:rgba(255,255,255,.6);margin-top:5px;font-weight:300;letter-spacing:.04em}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#D8D4C8;border:1px solid #D8D4C8;border-radius:var(--r);overflow:hidden;margin:18px 0}
+.stat-cell{background:#fff;padding:14px 10px;text-align:center}
+.stat-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--navy)}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.08em}
+.primary-btn{width:100%;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:8px;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.primary-btn:hover{background:var(--navy-light)}
+.secondary-btn{width:100%;padding:12px;background:transparent;color:var(--navy);border:1px solid #D8D4C8;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:border-color .15s}
+.secondary-btn:hover{border-color:var(--navy)}
+.gold-bar{display:inline-block;width:20px;height:2px;background:var(--gold);vertical-align:middle;margin-right:4px}
+.voice-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid #D8D4C8;border-radius:var(--rs);background:#fff;cursor:pointer;margin-bottom:7px;transition:all .15s}
+.voice-card:hover{border-color:var(--navy)}.voice-card.selected{border-color:var(--gold);background:#FDF8EF}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const VOCAB_TOPICS=[
+{id:'festivos',icon:'🎉',label:'Dias festivos',visual:false,words:[
+['el dia del santo',"saint's day"],['el cumpleanos','birthday'],['la Nochevieja',"New Year's Eve"],
+['la Navidad','Christmas'],['la Nochebuena','Christmas Eve'],['el Adviento','Advent'],
+['el dia de accion de gracias','Thanksgiving'],['el dia de los veteranos',"Veterans Day"],
+['el dia de los muertos','Day of the Dead'],['el dia de Todos los Santos',"All Saints Day"],
+['el dia de los trabajadores','Labor Day'],['el dia de la independencia','Independence Day'],
+['el dia del padre','Fathers Day'],['las vacaciones de verano','summer vacation'],
+['el dia de los caidos','Memorial Day'],['el dia de la madre','Mothers Day'],
+['las vacaciones de primavera','Spring Break'],['el dia de Pascua','Easter'],
+['el viernes santo','Good Friday'],['el jueves santo','Holy Thursday'],
+['la Semana Santa','Holy Week'],['el dia de San Patricio',"St. Patricks Day"],
+['la cuaresma','Lent'],['el miercoles de ceniza','Ash Wednesday'],
+['el dia de los presidentes',"Presidents Day"],['el dia de San Valentin',"Valentines Day"],
+['el dia del Ano Nuevo','New Years Day'],['el dia santo','holy day'],['el dia festivo','holiday']]},
+{id:'aeropuerto3',icon:'✈️',label:'El aeropuerto',visual:false,words:[
+['hacer un viaje en avion','to take a trip by plane'],['la visa','visa'],
+['el pasaporte','passport'],['la terminal','terminal'],['el vuelo nacional','domestic flight'],
+['el vuelo internacional','international flight'],['el helicoptero','helicopter'],
+['el avion','airplane'],['el aeropuerto','airport'],['hacer cola','to stand in line'],
+['facturar','to check baggage'],['caber','to fit'],['el maletin','briefcase'],
+['la maleta','suitcase'],['el equipaje de mano',"carry-on luggage"],['el equipaje','luggage'],
+['la puerta','gate'],['el talon','baggage claim stub'],['la tarjeta de embarque','boarding pass'],
+['la ventanilla','window'],['la fila','row'],['el pasillo','aisle'],['el asiento','seat'],
+['el viajero','traveler'],['el pasajero','passenger'],['la linea aerea','airline'],
+['el mostrador','counter'],['la llegada','arrival'],['la salida','departure'],
+['perder un vuelo','to miss a flight'],['abordar','to board'],['la escala','stop'],
+['el pasaje','fare'],['la aduana','customs'],['el control de seguridad','security check'],
+['el destino','destination'],['el vuelo directo','direct flight'],
+['el vuelo sin escala','non-stop flight']]},
+{id:'arte',icon:'🎨',label:'El arte',visual:false,words:[
+['la tinta','ink'],['la tiza','chalk'],['el pincel','brush'],['el bronce','bronze'],
+['el marmol','marble'],['la madera','wood'],['el barro','clay'],['la fibra','fiber'],
+['el metal','metal'],['el vidrio','glass'],['los medios','media'],['la escultura','sculpture'],
+['el mosaico','mosaic'],['el fresco','fresco'],['el tapiz','tapestry'],['el mural','mural'],
+['la acuarela','watercolor'],['el dibujo','drawing'],['el retrato','portrait'],
+['la pintura','painting'],['la obra maestra','masterpiece'],['esculpir','to sculpt'],
+['dibujar','to draw'],['pintar','to paint'],['el muralista','muralist'],
+['el escultor','sculptor'],['el pintor','painter'],['la exposicion','exposition'],
+['el artista','artist'],['el arte','art']]},
+{id:'ciclo',icon:'👶',label:'El ciclo humano',visual:false,words:[
+['celebrar','to celebrate'],['el regalo','gift'],['el cumpleanos','birthday'],
+['viudo','widowed'],['divorciado','divorced'],['separado','separated'],
+['casado','married'],['soltero','single'],['morir','to die'],
+['casarse con','to get married to'],['nacer','to be born'],['la muerte','death'],
+['la viuda','widow'],['la jubilacion','retirement'],['la vejez','old age'],
+['divorciarse','to get divorced'],['separarse de','to separate from'],
+['dar a luz','to give birth'],['el embarazo','pregnancy'],['la luna de miel','honeymoon'],
+['la novia','bride'],['el novio','groom'],['la boda','wedding'],
+['el matrimonio','matrimony'],['prometerse','to get engaged'],['el noviazgo','engagement'],
+['enamorarse de','to fall in love with'],['querer','to love'],['los votos','vows'],
+['la adultez','adulthood'],['la graduacion','graduation'],['la adolescencia','adolescence'],
+['la primera comunion','first communion'],['la ninez','childhood'],
+['la infancia','infancy'],['el nacimiento','birth']]},
+{id:'medico',icon:'🏥',label:'El medico',visual:false,words:[
+['enfermo','sick'],['el paciente','patient'],['el medico','doctor'],
+['el enfermero','nurse'],['vacunar','to vaccinate'],['recuperar','to recuperate'],
+['operar','to operate'],['la operacion','operation'],['la cirugia','surgery'],
+['las muletas','crutches'],['la venda','bandage'],['las gotas para los ojos','eye drops'],
+['las gotas para los oidos','ear drops'],['el regimen','diet'],['la vitamina','vitamin'],
+['la aspirina','aspirin'],['el antibiotico','antibiotic'],['la inyeccion','shot'],
+['la pastilla','tablet'],['la pildora','pill'],['el calmante','sedative'],
+['la receta','prescription'],['la medicina','medicine'],['diagnosticar','to diagnose'],
+['el pulso','pulse'],['la presion arterial','blood pressure'],['hinchado','swollen'],
+['tragar','to swallow'],['sufrir','to suffer'],['estornudar','to sneeze'],
+['el mal aliento','bad breath'],['la comezon','itch'],['doler','to hurt'],
+['el dolor de estomago','stomachache'],['el dolor de cabeza','headache'],
+['el dolor de espalda','backache'],['la fiebre','fever'],['la tos','cough'],
+['los escalofrios','chills'],['los sintomas','symptoms'],['la cita','appointment']]},
+{id:'trabajo3',icon:'💼',label:'El trabajo (intermedio)',visual:false,words:[
+['el salario','salary'],['el correo electronico','e-mail'],['el empleado','employee'],
+['el jefe','boss'],['el seguro medico','medical insurance'],['la propina','tip'],
+['el honorario','stipend'],['el sueldo','wage'],['jubilarse','to retire'],
+['emplear','to employ'],['la jornada','work day'],['el desempleo','unemployment'],
+['la especialidad','specialty'],['las referencias','references'],['el personal','personnel'],
+['la pension','pension'],['el tiempo parcial','part-time'],['el sobresueldo','overtime pay'],
+['la oficina','office'],['la oferta','offer'],['la solicitud','job application'],
+['la entrevista','interview'],['el tiempo completo','full-time'],['el titulo','degree'],
+['el dia festivo','day off'],['el contrato','contract'],['la empresa','company'],
+['la comision','commission']]},
+{id:'universo',icon:'🌌',label:'El universo',visual:false,words:[
+['la luna','moon'],['el sol','sun'],['la estrella','star'],['el cielo','sky'],
+['la Tierra','Earth'],['el universo','universe'],['el eclipse lunar','lunar eclipse'],
+['la luna llena','full moon'],['la fase','phase'],['la galaxia','galaxy'],
+['el telescopio','telescope'],['los binoculares','binoculars'],['los meteoritos','meteorites'],
+['el cometa','comet'],['las constelaciones','constellations'],['el planeta','planet'],
+['el descubrimiento','discovery'],['el observatorio','observatory'],
+['el astronomo','astronomer'],['la gravedad','gravity']]},
+{id:'geografia3',icon:'🗺️',label:'La geografia (expandida)',visual:false,words:[
+['la capital','capital'],['el pueblo','town'],['la ciudad','city'],['el pais','country'],
+['el continente','continent'],['la tierra','earth'],['el mundo','world'],
+['la frontera','border'],['el canon','canyon'],['la pradera','prairie'],
+['el llano','plain'],['la meseta','plateau'],['el istmo','isthmus'],
+['el archipielago','archipelago'],['el valle','valley'],['el cerro','hill'],
+['la cueva','cave'],['la sierra','mountain range'],['la montana','mountain'],
+['el desierto','desert'],['la costa','coast'],['la peninsula','peninsula'],
+['la isla','island'],['el arroyo','stream'],['el canal','canal'],['el estrecho','strait'],
+['el golfo','gulf'],['el lago','lake'],['el estanque','pond'],['el mar','sea'],
+['el oceano','ocean'],['el rio','river'],['el puerto','port'],['la bahia','bay'],
+['el meridiano','meridian'],['la longitud','longitude'],['la latitud','latitude'],
+['el hemisferio','hemisphere'],['el globo','globe'],['el ecuador','equator'],
+['el tropico','tropic'],['el polo','pole']]},
+{id:'ropa3',icon:'👗',label:'La ropa y las telas',visual:false,words:[
+['la pana','corduroy'],['el terciopelo','velvet'],['el fieltro','felt'],
+['el poliester','polyester'],['la gamuza','suede'],['el encaje','lace'],
+['el nilon','nylon'],['la lana','wool'],['la seda','silk'],['la franela','flannel'],
+['el cuero','leather'],['el algodon','cotton'],['la tela','fabric'],['el tamano','size'],
+['el tacon','heel'],['la manga larga','long sleeve'],['la manga corta','short sleeve'],
+['el cierre','zipper'],['el boton','button'],['el bolsillo','pocket'],
+['el baston','cane'],['la cartera','wallet'],['el panuelo','handkerchief'],
+['estar de moda','to be in style'],['ponerse','to put on'],['quitarse','to take off'],
+['vestirse','to get dressed'],['cambiarse','to change clothes']]},
+{id:'matematicas3',icon:'📐',label:'Las matematicas',visual:false,words:[
+['la conversion','conversion'],['la altura','height'],['la largura','length'],
+['la anchura','width'],['el volumen','volume'],['el area','area'],
+['el litro','liter'],['el miligramo','milligram'],['la tonelada','ton'],
+['la libra','pound'],['la onza','ounce'],['el peso','weight'],
+['el centimetro','centimeter'],['el milimetro','millimeter'],['la pulgada','inch'],
+['el centigrado','centigrade'],['los grados','degrees'],
+['el pentagono','pentagon'],['el paralelogramo','parallelogram'],
+['el rectangulo','rectangle'],['el cuadrado','square'],['el triangulo','triangle'],
+['el circulo','circle'],['el angulo','angle'],['la linea','line'],
+['la geometria','geometry'],['al cuadrado','squared'],['la potencia','power'],
+['la variable','variable'],['el algebra','algebra'],['el digito','digit'],
+['el numero romano','Roman numeral'],['el numero impar','odd number'],
+['el numero par','even number'],['el porcentaje','percentage'],
+['un cuarto','one-fourth'],['un tercio','one-third'],['un medio','one-half'],
+['las fracciones','fractions']]},
+{id:'cuerpo3',icon:'🫀',label:'Las partes del cuerpo',visual:false,words:[
+['el tobillo','ankle'],['la rodilla','knee'],['el muslo','thigh'],['la espalda','back'],
+['la cadera','hip'],['la cintura','waist'],['el pulgar','thumb'],['la muneca','wrist'],
+['el codo','elbow'],['el pecho','chest'],['el hombro','shoulder'],['el cuello','neck'],
+['la garganta','throat'],['el menton','chin'],['la mandibula','jaw'],
+['el parpado','eyelid'],['la ceja','eyebrow'],['bostezar','to yawn'],
+['el apendice','appendix'],['las amigdalas','tonsils'],['el esofago','esophagus'],
+['la grasa','fat'],['la glandula','gland'],['los nervios','nerves'],
+['el musculo','muscle'],['la arteria','artery'],['la vena','vein'],
+['el pancreas','pancreas'],['el higado','liver'],['el rinon','kidney'],
+['el pulmon','lung'],['el corazon','heart'],['la columna vertebral','spine'],
+['el cerebro','brain']]},
+{id:'profesiones3',icon:'👩‍⚕️',label:'Las profesiones',visual:false,words:[
+['el vaquero','cowboy'],['el terapeuta','therapist'],['el psiquiatra','psychiatrist'],
+['el sastre',"tailor/seamstress"],['el rabino','rabbi'],['el quimico','chemist'],
+['el politico','politician'],['el periodista','news reporter'],['la peluquera','beautician'],
+['el peluquero','barber'],['el pediatra','pediatrician'],['el panadero','baker'],
+['la modista','dressmaker'],['el modelo','model'],['el marinero','sailor'],
+['el locutor',"announcer/commentator"],['el juez','judge'],['el joyero','jeweler'],
+['el jardinero','gardener'],['el interprete','interpreter'],['el ingeniero','engineer'],
+['el gerente','manager'],['el plomero','plumber'],['el florista','florist'],
+['el farmaceutico','pharmacist'],['la escultora','sculptress'],['el escritor','writer'],
+['el entrenador',"coach/trainer"],['el disenador','designer'],['el contable','accountant'],
+['el cientifico','scientist'],['el chofer','chauffeur'],['el cartero','mail carrier'],
+['el carnicero','butcher'],['el bombero','firefighter'],['el banquero','banker'],
+['el bailarin','dancer'],['el autor','author'],['el astronauta','astronaut'],
+['el arqueologo','archaeologist'],['el ama de casa','homemaker'],['el alcalde','mayor'],
+['el abogado','lawyer'],['el oficio',"trade/occupation"]]},
+{id:'religiones',icon:'⛪',label:'Las religiones',visual:false,words:[
+['la iglesia','church'],['creer','to believe'],['el convento','convent'],
+['la capilla','chapel'],['el monasterio','monastery'],['la catedral','cathedral'],
+['el templo','temple'],['la sinagoga','synagogue'],['la mezquita','mosque'],
+['el matrimonio','matrimony'],['la primera comunion','first communion'],
+['la confesion','confession'],['la confirmacion','confirmation'],['el bautismo','baptism'],
+['musulman','Muslim'],['hindu','Hindu'],['budista','Buddhist'],
+['catolico','Catholic'],['cristiano','Christian'],['hebreo','Hebrew'],
+['judio','Jewish'],['pagano','pagan'],['ateista','atheist'],['agnostico','agnostic'],
+['ayunar','to fast'],['adorar','to worship'],['rezar','to pray'],
+['la Tora','Torah'],['el Coran','Koran'],['la Biblia','Bible'],
+['la misa','mass'],['el rito','rite'],['la oracion','prayer'],
+['el Islam','Islam'],['el judaismo','Judaism'],['el hinduismo','Hinduism'],
+['el catolicismo','Catholicism'],['el cristianismo','Christianity'],['el budismo','Buddhism'],
+['el angel','angel'],['el dios','god'],['el espiritu','spirit'],['el alma','soul'],
+['el creyente','believer'],['la fe','faith'],['el obispo','bishop'],
+['el cardinal','cardinal'],['el Papa','Pope'],['la monja','nun'],['el monje','monk'],
+['el sacerdote','priest'],['el ministro','minister']]},
+{id:'deportes3',icon:'⚽',label:'Los deportes (intermedio)',visual:false,words:[
+['el velero','sailboat'],['la regata','boat race'],['navegar','to sail'],
+['esquiar al acuatico','to water ski'],['hacer esgrima','to fence'],
+['cazar','to hunt'],['bucear','to scuba dive'],['andar en trineo','to sled'],
+['silbar','to whistle'],['derrotar','to defeat'],['el equipo ganador','winning team'],
+['el equipo perdedor','losing team'],['los visitantes','visiting team'],
+['el campeon','champion'],['el animador','cheerleader'],['el arbitro','referee'],
+['el entrenador',"coach/trainer"],['la carrera','race'],['el campeonato','championship'],
+['el empate','tie'],['el tanteo','score'],['la pista','track'],
+['hacer el windsurf','to go windsurfing'],['hacer la gimnastica','to do gymnastics'],
+['hacer ejercicios aerobicos','to do aerobics'],['jugar al billar','to play pool'],
+['patinar sobre hielo','to ice skate'],['patinar','to rollerskate'],
+['luchar','to wrestle'],['levantar pesos','to lift weights']]},
+];
+const GRAMMAR_TOPICS=[
+{id:'g3_imperf',icon:'📖',label:'Imperfect Tense',questions:[
+{q:'Cuando era nino, yo _____ mucho. (jugar)',opts:['jugaba','jugue','juego','jugare'],ans:0,exp:'The imperfect describes habitual past actions or ongoing states. Jugar (o->ue stem changer) imperfect: jugaba. Regular -ar imperfect endings: -aba, -abas, -aba, -abamos, -aban.'},
+{q:'Todos los veranos nosotros _____ a la playa. (ir)',opts:['ibamos','fuimos','vamos','iriamos'],ans:0,exp:'IR is irregular in the imperfect: iba, ibas, iba, ibamos, iban. Imperfect for repeated past events.'},
+{q:'Ella siempre _____ cafe por la manana. (tomar)',opts:['tomo','tomaba','tomara','tomara'],ans:1,exp:'Siempre (always) signals habitual past action -> imperfect. Tomar: tomaba.'},
+{q:'Eran las tres de la tarde cuando _____ el telefono. (sonar)',opts:['sonaba','sono','suena','sonara'],ans:1,exp:'The ringing phone was a single completed action interrupting background -> preterit. Background time (eran) uses imperfect.'},
+{q:'Ser imperfecto: yo _____',opts:['fui','era','soy','seria'],ans:1,exp:'SER is irregular in the imperfect: era, eras, era, eramos, eran.'},
+{q:'Ver imperfecto: ellos _____',opts:['vieron','ven','veian','veran'],ans:2,exp:'VER is irregular in the imperfect: veia, veias, veia, veiamos, veian. Ellos -> veian.'},
+{q:'El imperfecto se usa para _____.',opts:['acciones completadas','estados habituales en el pasado','el futuro','mandatos'],ans:1,exp:'The imperfect expresses: habitual past actions (used to), past states/descriptions, background info, and ongoing past situations.'},
+{q:'Cuando era joven, ella _____ el violin. (tocar)',opts:['toco','tocara','tocaba','toca'],ans:2,exp:'Habitual past action (she used to play) -> imperfect. Tocar: tocaba.'},
+]},
+{id:'g3_pret_imperf',icon:'⚡',label:'Preterit vs. Imperfect',questions:[
+{q:'Yo _____ cuando sono el telefono. (estudiar)',opts:['estudiaba','estudie','estudio','estudiare'],ans:0,exp:'The interrupted ongoing action uses imperfect (estudiaba). The interrupting completed action (sono) uses preterit.'},
+{q:'Ayer ella _____ al supermercado. (ir)',opts:['iba','fue','va','ira'],ans:1,exp:'Ayer (yesterday) + single completed trip -> preterit. Fue.'},
+{q:'Cada dia el _____ a correr por el parque. (salir)',opts:['salio','salia','sale','saldra'],ans:1,exp:'Cada dia (every day) signals habitual past -> imperfect. Salir: salia.'},
+{q:'De repente, todos _____ . (levantarse)',opts:['se levantaban','se levantaron','se levantan','se levantaran'],ans:1,exp:'De repente (suddenly) signals a sudden completed action -> preterit. Se levantaron.'},
+{q:'Cuando eramos jovenes, _____ mucho. (viajar)',opts:['viajamos','viajabamos','viajamos','viajariamos'],ans:1,exp:'Cuando eramos (imperfect state) + habitual action -> imperfect. Viajabamos.'},
+{q:'El verano pasado nosotros _____ en Madrid. (vivir)',opts:['viviamos','vivimos','vivimos','viviremos'],ans:1,exp:'El verano pasado = one specific completed time period -> preterit. Vivimos.'},
+{q:'Mientras ella _____ , el llego. (dormir)',opts:['durmio','dormia','duerme','dormira'],ans:1,exp:'Mientras (while) + ongoing background action -> imperfect. Dormia.'},
+{q:'Cual frase usa bien el imperfecto?',opts:['Ayer fui al banco.','Siempre ibamos al parque los domingos.','El lunes llegue tarde.','Ella hablo con el jefe.'],ans:1,exp:'Siempre ibamos = habitual past action -> correct imperfect use. The others describe single completed events -> preterit.'},
+]},
+{id:'g3_conditional',icon:'🔮',label:'Conditional Tense',questions:[
+{q:'Con mas dinero, yo _____ a Espana. (viajar)',opts:['viajaria','viajare','viajaba','viaje'],ans:0,exp:'Conditional expresses what would happen. Regular formation: infinitive + ia endings. Viajar -> viajaria.'},
+{q:'Ella dijo que _____ manana. (venir)',opts:['vendria','vendra','vino','viene'],ans:0,exp:'VENIR has an irregular conditional stem: vendr-. Ella -> vendria.'},
+{q:'Que _____ tu en mi lugar? (hacer)',opts:['hacias','haras','hiciste','harias'],ans:3,exp:'HACER has irregular conditional stem: har-. Tu -> harias.'},
+{q:'Nosotros _____ mas si tuvieramos tiempo. (estudiar)',opts:['estudiabamos','estudiaremos','estudiariamos','estudiamos'],ans:2,exp:'Regular conditional: nosotros estudiar + iamos = estudiariamos.'},
+{q:'El condicional de PODER es _____.',opts:['podria','pudiera','podra','pudo'],ans:0,exp:'PODER has irregular conditional stem: podr-. Yo -> podria, el -> podria, etc.'},
+{q:'Deberian llamar antes de llegar. Deberian significa _____.',opts:['they called','they will call','they should call','they were calling'],ans:2,exp:'DEBER in conditional = should. Deberian = they should (do something).'},
+{q:'Si tuviera un millon de dolares, _____ una casa grande. (comprar)',opts:['compraria','comprare','compraba','compre'],ans:0,exp:'Si + imperfect subjunctive, conditional. Comprar -> compraria.'},
+{q:'Ellos dijeron que _____ a la fiesta. (llegar)',opts:['llegaron','llegaban','llegarian','lleguen'],ans:2,exp:'Reporting what someone said they would do -> conditional. Llegar -> llegarian.'},
+]},
+{id:'g3_past_perf',icon:'⏮️',label:'Past Perfect (Pluscuamperfecto)',questions:[
+{q:'Cuando llegue, ella ya _____ . (salir)',opts:['salio','salia','habia salido','habra salido'],ans:2,exp:'Past perfect = haber (imperfect) + past participle. Expresses what had happened before another past event. Habia salido.'},
+{q:'El pasado participio de HABLAR es _____.',opts:['hablado','hablando','hablo','hablaba'],ans:0,exp:'Regular -ar past participles: drop -ar, add -ado. Hablar -> hablado.'},
+{q:'El pasado participio de COMER es _____.',opts:['comiendo','comido','como','comera'],ans:1,exp:'Regular -er past participles: drop -er, add -ido. Comer -> comido.'},
+{q:'Nosotros ya _____ cuando llego el profesor. (terminar)',opts:['terminabamos','terminamos','habiamos terminado','terminariamos'],ans:2,exp:'Past perfect: habiamos + terminado. We had already finished (before the teacher arrived).'},
+{q:'El pasado participio de ESCRIBIR es _____.',opts:['escribiendo','escrito','escribido','escribira'],ans:1,exp:'ESCRIBIR has an irregular past participle: escrito. Other irregulars: hecho (hacer), dicho (decir), visto (ver), puesto (poner).'},
+{q:'El pluscuamperfecto usa _____ + participio pasado.',opts:['haber en presente','haber en imperfecto','ser en preterito','estar en futuro'],ans:1,exp:'Pluscuamperfecto = imperfect of haber (habia, habias, habia, habiamos, habian) + past participle.'},
+{q:'Yo nunca _____ tapas antes de ir a Espana. (probar)',opts:['probe','probaba','habia probado','probaria'],ans:2,exp:'Habia probado = I had (never) tried. Past perfect for what had (or had not) occurred before a reference point.'},
+{q:'Cuando ella llamo, yo ya _____ la tarea. (hacer)',opts:['hacia','hice','habia hecho','hare'],ans:2,exp:'HACER has irregular participle: hecho. Habia hecho = I had already done (the homework).'},
+]},
+{id:'g3_subjunctive',icon:'💫',label:'Subjunctive (Introduction)',questions:[
+{q:'Quiero que tu _____ la verdad. (decir)',opts:['dices','dijiste','digas','diras'],ans:2,exp:'Querer que + subjunctive. The subjunctive is used after expressions of desire, emotion, doubt, and impersonal expressions. Decir subjunctive: digas.'},
+{q:'Es importante que nosotros _____ a tiempo. (llegar)',opts:['llegamos','lleguemos','llegamos','llegaremos'],ans:1,exp:'Es importante que + subjunctive. Llegar -> lleguemos (spelling change: g->gu before e).'},
+{q:'Espero que ella _____ bien el examen. (pasar)',opts:['paso','pasara','pase','pasaba'],ans:2,exp:'Esperar que + subjunctive. Pasar -> pase.'},
+{q:'No creo que el _____ razon. (tener)',opts:['tiene','tenga','tendra','tuvo'],ans:1,exp:'No creer que + subjunctive (expressing doubt). Tener -> tenga (irregular subjunctive).'},
+{q:'Para formar el subjuntivo de verbos -ar: _____',opts:['use -a endings','use -e endings','use -aba endings','use -o endings'],ans:1,exp:'Subjunctive of -ar verbs uses -e endings: hable, hables, hable, hablemos, hablen. -er/-ir verbs use -a endings.'},
+{q:'Ojalaque _____ manana. (hacer sol)',opts:['hace sol','haga sol','hizo sol','hara sol'],ans:1,exp:'Ojala que + subjunctive expresses hope/wish. Hacer -> haga. Haga sol = it be sunny.'},
+{q:'Mis padres quieren que yo _____ medicina. (estudiar)',opts:['estudio','estudie','estudiare','estudiaba'],ans:1,exp:'Querer que + subjunctive. Estudiar -> estudie.'},
+{q:'El subjuntivo se usa despues de _____.',opts:['verbos de certeza','verbos de deseo/emocion/duda','el preterito siempre','preguntas directas'],ans:1,exp:'The subjunctive follows verbs of desire (querer, esperar), emotion (alegrarse, temer), doubt (dudar, no creer), and impersonal expressions (es importante, es necesario).'},
+]},
+{id:'g3_para_por',icon:'⚖️',label:'Para vs. Por',questions:[
+{q:'Estudio espanol _____ hablar con mi familia. (in order to)',opts:['por','para','de','con'],ans:1,exp:'PARA + infinitive = in order to (purpose/goal). Estudio para hablar = I study in order to speak.'},
+{q:'Este regalo es _____ ti. (for you / intended for)',opts:['por','para','de','con'],ans:1,exp:'PARA = intended recipient or destination. Este regalo es para ti.'},
+{q:'Gracias _____ tu ayuda. (thanks for)',opts:['para','por','de','con'],ans:1,exp:'POR = in exchange for, because of, on behalf of. Gracias por = thanks for.'},
+{q:'Camino _____ el parque todos los dias. (through/along)',opts:['para','de','por','con'],ans:2,exp:'POR = movement through, along, or around a place. Camino por el parque = I walk through the park.'},
+{q:'El libro fue escrito _____ Cervantes.',opts:['para','por','de','con'],ans:1,exp:'POR = agent in passive voice. El libro fue escrito por Cervantes = The book was written by Cervantes.'},
+{q:'Tengo que terminar este proyecto _____ el viernes.',opts:['por','de','para','con'],ans:2,exp:'PARA = deadline. Tengo que terminar para el viernes = I have to finish by Friday.'},
+{q:'Ella trabajo _____ tres horas sin descanso.',opts:['para','de','con','por'],ans:3,exp:'POR = duration of time. Trabajo por tres horas = She worked for three hours.'},
+{q:'Voy a la tienda _____ leche. (to get / in exchange for)',opts:['para','de','por','con'],ans:2,exp:'POR = going for something / in exchange for. Voy por leche = I am going for milk.'},
+]},
+{id:'g3_conjunctions',icon:'🔗',label:'Correlative Conjunctions',questions:[
+{q:'_____ comes tu _____ no comes, debes decidir.',opts:['Pero / sino','O... o...','Ni... ni...','Tanto... como...'],ans:1,exp:'O... o... = either... or... Presents two alternatives: either you eat or you do not eat.'},
+{q:'No me gusta _____ el cafe _____ el te.',opts:['o... o...','tanto... como...','ni... ni...','pero... sino...'],ans:2,exp:'Ni... ni... = neither... nor... No me gusta ni el cafe ni el te = I like neither coffee nor tea.'},
+{q:'Ella habla _____ espanol _____ ingles.',opts:['ni... ni...','o... o...','tanto... como...','pero... sino...'],ans:2,exp:'Tanto... como... = both... and... / as much... as... Ella habla tanto espanol como ingles.'},
+{q:'No es un problema de dinero, _____ de tiempo.',opts:['o... o...','ni... ni...','sino','pero'],ans:2,exp:'SINO is used after a negative to present the correction. No es de dinero sino de tiempo = not money but rather time.'},
+{q:'_____ estudias _____ miras television - tienes que elegir.',opts:['Ni... ni...','Tanto... como...','O... o...','Pero... sino...'],ans:2,exp:'O... o... = either... or... presenting a forced choice.'},
+{q:'Ni Juan _____ Maria saben la respuesta.',opts:['pero','o','ni','sino'],ans:2,exp:'Ni... ni... = neither... nor... Ni Juan ni Maria = neither Juan nor Maria.'},
+{q:'Tanto los profesores _____ los estudiantes deben participar.',opts:['ni','pero','sino','como'],ans:3,exp:'Tanto... como... = both... and... Tanto los profesores como los estudiantes.'},
+{q:'No quiero cafe; _____ quiero te.',opts:['pero','sino que','o','ni'],ans:1,exp:'SINO QUE (not just sino) is used when what follows is a conjugated verb clause. No quiero cafe sino que quiero te.'},
+]},
+{id:'g3_indirect',icon:'👆',label:'Indirect Commands',questions:[
+{q:'Que _____ Maria! (Let Maria come in)',opts:['entra','entre','entro','entrara'],ans:1,exp:'Indirect commands use que + subjunctive. Que entre Maria = Let Maria come in / Have Maria come in.'},
+{q:'Que _____ ellos! (Let them wait)',opts:['esperan','esperen','esperaban','esperaron'],ans:1,exp:'Que esperen = Let them wait / Have them wait. Que + subjunctive for 3rd person commands.'},
+{q:'Que _____ el medico. (Have the doctor come)',opts:['venga','viene','vino','vendra'],ans:0,exp:'Venir subjunctive: venga. Que venga el medico = Have the doctor come / Let the doctor come.'},
+{q:'Que _____ Juan el informe. (Have Juan write the report)',opts:['escribe','escribo','escriba','escribio'],ans:2,exp:'Escribir subjunctive: escriba. Que escriba Juan = Let/Have Juan write it.'},
+{q:'Los mandatos indirectos usan que + _____.',opts:['infinitivo','indicativo','subjuntivo','participio'],ans:2,exp:'Indirect commands = que + present subjunctive. Used to relay commands to a 3rd party.'},
+{q:'Que _____ los estudiantes la tarea. (Have the students do)',opts:['hacen','hagan','hicieron','haran'],ans:1,exp:'Hacer subjunctive: hagan. Que hagan los estudiantes la tarea.'},
+{q:'Que _____ ella - yo no puedo ir. (Let her go)',opts:['va','fue','vaya','ira'],ans:2,exp:'Ir subjunctive: vaya. Que vaya ella = Let her go.'},
+{q:'Que _____ ellos la verdad. (Have them tell)',opts:['digan','dicen','dijeron','diran'],ans:0,exp:'Decir subjunctive: digan. Que digan ellos la verdad.'},
+]},
+{id:'g3_passive',icon:'📢',label:'Passive Voice (Se)',questions:[
+{q:'_____ venden zapatos aqui. (Shoes are sold here)',opts:['Ellos','Se','Les','Nos'],ans:1,exp:'Impersonal/passive SE: Se venden zapatos = Shoes are sold (here). The verb agrees with the subject (zapatos -> venden).'},
+{q:'En este restaurante _____ come muy bien.',opts:['se','le','nos','te'],ans:0,exp:'Se come = one eats / people eat / eating is done. Impersonal se with singular verb.'},
+{q:'_____ habla espanol en muchos paises.',opts:['Le','Se','Nos','Te'],ans:1,exp:'Se habla espanol = Spanish is spoken / people speak Spanish. Singular because espanol is singular.'},
+{q:'El libro fue escrito _____ el autor.',opts:['para','con','por','de'],ans:2,exp:'True passive voice: ser + past participle + por + agent. Fue escrito por el autor.'},
+{q:'Se _____ muchos libros en esa tienda. (are sold)',opts:['vende','venden','vendio','venderan'],ans:1,exp:'Se + verb agrees with subject. Libros (plural) -> se venden.'},
+{q:'Aqui no _____ fumar. (Smoking is not allowed)',opts:['se puede','se pueden','se pudo','se podria'],ans:0,exp:'Se puede + infinitive = one can / it is possible to. Fumar is the infinitive (singular).'},
+{q:'La voz pasiva con SE se llama _____.',opts:['voz activa','se impersonal','se accidental','voz media'],ans:1,exp:'The construction SE + verb is called se impersonal or se pasivo. It is very common in Spanish for signs, instructions, and general statements.'},
+{q:'Que significa Se busca empleado?',opts:['An employee was fired','An employee is being sought/Wanted','Employees must search','The employee searched'],ans:1,exp:'Se busca = is sought / wanted. Common in job ads. Se + singular verb + singular subject.'},
+]},
+{id:'g3_subjunctive2',icon:'🌟',label:'Subjunctive — Triggers',questions:[
+{q:'Mi madre quiere que yo _____ a casa temprano. (volver)',opts:['vuelvo','volvere','vuelva','volveria'],ans:2,exp:'QUERER QUE triggers subjunctive. Volver (o->ue) subjunctive: vuelva.'},
+{q:'Es necesario que todos _____ la tarea. (hacer)',opts:['hacen','haran','hagan','hacian'],ans:2,exp:'ES NECESARIO QUE triggers subjunctive. Hacer subjunctive: hagan.'},
+{q:'Me alegra que ella _____ bien. (estar)',opts:['esta','estaba','este','estara'],ans:2,exp:'ME ALEGRA QUE (I am glad that) triggers subjunctive. Estar subjunctive: este.'},
+{q:'Dudo que el _____ la verdad. (saber)',opts:['sabe','supo','sepa','sabra'],ans:2,exp:'DUDAR QUE (to doubt that) triggers subjunctive. Saber subjunctive: sepa.'},
+{q:'Busco un apartamento que _____ dos habitaciones. (tener)',opts:['tiene','tenia','tenga','tendra'],ans:2,exp:'When describing an indefinite or nonexistent antecedent, use subjunctive. Tener subjunctive: tenga.'},
+{q:'Ojalaque manana _____ sol. (hacer)',opts:['hace','hizo','haga','hara'],ans:2,exp:'OJALA QUE always triggers subjunctive. Hacer subjunctive: haga.'},
+{q:'No hay nadie que _____ esto. (poder)',opts:['puede','pudo','podra','pueda'],ans:3,exp:'Negative antecedent (nadie) triggers subjunctive. Poder subjunctive: pueda.'},
+{q:'Te recomiendo que _____ mas temprano. (llegar)',opts:['llegas','llegaste','llegues','llegaras'],ans:2,exp:'RECOMENDAR QUE triggers subjunctive. Llegar subjunctive: llegues.'},
+]},
+];
+const GRAMMAR_CONCEPTS={
+g3_imperf:{title:'Imperfect Tense',summary:'The imperfect describes habitual or repeated past actions, background descriptions, ongoing states, and age/time in the past. Think: used to, was/were doing, would (habitually).',examples:[['Cuando era nino, jugaba mucho.','When I was a child, I used to play a lot.'],['Todos los veranos ibamos a la playa.','Every summer we would go to the beach.'],['Eran las tres de la tarde.','It was three in the afternoon.']],tip:'Regular -ar imperfect: -aba, -abas, -aba, -abamos, -aban. Regular -er/-ir: -ia, -ias, -ia, -iamos, -ian. Only 3 irregular verbs: ser (era), ir (iba), ver (veia).'},
+g3_pret_imperf:{title:'Preterit vs. Imperfect',summary:'These two past tenses work together. The imperfect sets the scene (background, ongoing) while the preterit describes the action that happened (completed, sudden).',examples:[['Yo estudiaba cuando sono el telefono.','I was studying (imperf) when the phone rang (pret).'],['Siempre viajabamos en verano.','We always used to travel in summer. (habitual -> imperf)'],['Ayer fui al mercado.','Yesterday I went to the market. (single event -> pret)']],tip:'Keywords for PRETERIT: ayer, anoche, de repente, por fin, una vez. Keywords for IMPERFECT: siempre, todos los dias, cada ano, mientras, de nino/a, generalmente.'},
+g3_conditional:{title:'Conditional Tense',summary:'The conditional expresses what would happen under certain conditions. Also used for polite requests and reported speech.',examples:[['Con mas tiempo, viajaria por todo el mundo.','With more time, I would travel the world.'],['Me podria decir donde esta el banco?','Could you tell me where the bank is? (polite)'],['Dijo que vendria manana.','He said he would come tomorrow. (reported speech)']],tip:'Regular conditional: full infinitive + -ia, -ias, -ia, -iamos, -ian. Irregular stems match future irregulars: querer->querr-, poder->podr-, hacer->har-, venir->vendr-, salir->saldr-.'},
+g3_past_perf:{title:'Past Perfect (Pluscuamperfecto)',summary:'The past perfect expresses what had already happened before another past event. Formed with haber in the imperfect + past participle.',examples:[['Cuando llegue, ella ya habia salido.','When I arrived, she had already left.'],['Nunca habia comido paella antes.','I had never eaten paella before.'],['Ya habiamos terminado cuando llego el profesor.','We had already finished when the teacher arrived.']],tip:'Formation: habia/habias/habia/habiamos/habian + past participle. Key irregular participles: hecho (hacer), dicho (decir), escrito (escribir), visto (ver), puesto (poner), vuelto (volver), abierto (abrir).'},
+g3_subjunctive:{title:'Subjunctive — Introduction',summary:'The subjunctive is a mood (not a tense) used to express wishes, emotions, doubt, and hypothetical situations. It appears in the clause after que when the main verb triggers it.',examples:[['Quiero que tu vengas.','I want you to come. (desire -> subjunctive)'],['Es importante que estudies.','It is important that you study. (impersonal expression)'],['No creo que el tenga razon.','I do not think he is right. (doubt)']],tip:'Subjunctive triggers (WEIRDO): Wishes, Emotions, Impersonal expressions, Recommendations, Doubt/Denial, Ojalaque. Formation: take yo present form, drop -o, add opposite endings (-ar verbs use -e endings; -er/-ir use -a endings).'},
+g3_para_por:{title:'Para vs. Por',summary:'Both translate as for in English but have distinct uses. PARA points forward to purpose, destination, or deadline. POR looks backward to cause, exchange, or duration.',examples:[['Estudio espanol para hablar con mi familia.','I study Spanish in order to speak with my family. (purpose -> PARA)'],['Gracias por tu ayuda.','Thank you for your help. (in exchange for -> POR)'],['El libro fue escrito por Cervantes.','The book was written by Cervantes. (agent -> POR)']],tip:'PARA = Purpose/goal, Recipient, Deadline, Destination, Opinion (para mi = in my opinion). POR = Duration, Exchange, Movement through, Agent in passive, Cause/motive, On behalf of.'},
+g3_conjunctions:{title:'Correlative Conjunctions',summary:'Correlative conjunctions come in pairs and connect parallel elements. The most important pairs in Spanish are o...o..., ni...ni..., and tanto...como...',examples:[['O estudias o miras television.','Either you study or you watch TV.'],['No me gusta ni el cafe ni el te.','I like neither coffee nor tea.'],['Habla tanto espanol como ingles.','She speaks both Spanish and English.']],tip:'O...o... = either...or... (choice). Ni...ni... = neither...nor... (double negative - correct in Spanish!). Tanto...como... = both...and... / as much...as... Remember: ni requires no agreement with verb if it comes before.'},
+g3_indirect:{title:'Indirect Commands',summary:'Indirect commands tell a third party to do something. They use the formula: que + present subjunctive. Often translated as let him/her/them... or have him/her/them...',examples:[['Que entre Maria.','Let Maria come in. / Have Maria come in.'],['Que esperen ellos.','Let them wait.'],['Que lo haga Juan.','Have Juan do it. / Let Juan do it.']],tip:'Structure: Que + (subject) + present subjunctive. The subject is optional and can come before or after the verb. Use when you want someone to relay a command or when saying let + person + verb.'},
+g3_passive:{title:'Passive Voice (Se)',summary:'Spanish commonly uses SE to express passive meaning and impersonal statements. The verb agrees with the grammatical subject (the thing done), not a person.',examples:[['Se venden zapatos aqui.','Shoes are sold here. (zapatos = plural -> venden)'],['Se habla espanol en este pais.','Spanish is spoken in this country.'],['No se puede fumar aqui.','Smoking is not allowed here.']],tip:'Se + verb (3rd person). If followed by plural noun, verb is plural: se venden libros. If followed by infinitive or singular noun, verb is singular: se habla, se puede. Used for signs, instructions, and general statements about what is done.'},
+g3_subjunctive2:{title:'Subjunctive — Key Triggers',summary:'Learning which expressions trigger the subjunctive is the key to using it correctly. The most important triggers fall into clear categories.',examples:[['Quiero que ella venga.','I want her to come. (desire)'],['Es importante que estudies.','It is important that you study. (impersonal expression)'],['Dudo que el sepa la respuesta.','I doubt he knows the answer. (doubt)']],tip:'Main triggers: DESIRE: querer que, esperar que, pedir que. EMOTION: alegrarse de que, temer que, sorprender que. IMPERSONAL: es importante/necesario/posible que. DOUBT: dudar que, no creer que. SPECIAL: ojala que, cuando (future), buscar algo que (indefinite antecedent).'},
+};
+ 
+const READING_PASSAGES=[
+{id:'diary',type:'Personal Diary',icon:'📔',contextEng:'You find the following diary entry written by a Spanish teenager.',
+text:`Martes, 14 de noviembre
+ 
+Querido diario:
+ 
+Hoy fue un dia muy especial. Esta manana,
+cuando me desperte, habia nevado durante
+la noche y todo estaba blanco. Antes de
+salir para el instituto, mi madre me
+preparo chocolate caliente.
+ 
+En el instituto, la profesora de historia
+nos hablo de la Guerra Civil espanola. Fue
+muy interesante, aunque un poco triste.
+Despues de clase, fui al entrenamiento
+de futbol con mis amigos. Jugamos durante
+dos horas y lo pasamos muy bien.
+ 
+Esta noche, mi familia ceno junta por
+primera vez en mucho tiempo porque mi
+padre habia vuelto de un viaje de negocios.
+Comimos paella y hablamos durante horas.
+ 
+Fue un dia perfecto.
+- Lucia`,
+questions:[
+{q:'What had happened during the night before Lucia woke up?',opts:['It had rained heavily','It had snowed','There was a thunderstorm','It had been very windy'],ans:1,exp:'Lucia writes "habia nevado durante la noche y todo estaba blanco" — it had snowed during the night.'},
+{q:'What subject did the history teacher discuss?',opts:['The Roman Empire','The discovery of America','The Spanish Civil War','World War II'],ans:2,exp:'"La profesora de historia nos hablo de la Guerra Civil espanola" — the teacher talked about the Spanish Civil War.'},
+{q:'Why was dinner special that evening?',opts:['It was her birthday','They ate paella for the first time','Her father had returned from a business trip','They had guests'],ans:2,exp:'Lucia says "mi padre habia vuelto de un viaje de negocios" — her father had returned from a business trip.'},
+]},
+{id:'news_article',type:'News Article',icon:'📰',contextEng:'You read the following article in a Spanish cultural magazine.',
+text:`TECNOLOGIA Y CULTURA
+La Revolucion Digital en Espana
+ 
+Segun un estudio reciente, mas del 85%
+de los jovenes espanoles entre 16 y 24
+anos usan las redes sociales a diario.
+Instagram y TikTok son las plataformas
+mas populares, mientras que el uso de
+Facebook ha disminuido considerablemente
+entre este grupo de edad.
+ 
+Los expertos senalan que esta tendencia
+tiene consecuencias tanto positivas como
+negativas. Por un lado, los jovenes estan
+mas conectados globalmente y tienen
+acceso inmediato a la informacion. Por
+otro lado, estudios muestran una relacion
+entre el uso excesivo de redes sociales
+y los problemas de salud mental.
+ 
+El gobierno espanol anuncio recientemente
+un programa educativo para ensenyar a
+los jovenes a usar la tecnologia de
+manera responsable.`,
+questions:[
+{q:'What percentage of young Spaniards use social media daily?',opts:['More than 75%','More than 80%','More than 85%','More than 90%'],ans:2,exp:'The article states "mas del 85% de los jovenes espanoles... usan las redes sociales a diario."'},
+{q:'Which social media platform has declined among young people?',opts:['Instagram','TikTok','YouTube','Facebook'],ans:3,exp:'"el uso de Facebook ha disminuido considerablemente entre este grupo de edad" — Facebook use has decreased considerably.'},
+{q:'What did the Spanish government announce?',opts:['A ban on social media for minors','A new tax on technology companies','An educational program on responsible technology use','Free internet for all citizens'],ans:2,exp:'The government announced "un programa educativo para ensenyar a los jovenes a usar la tecnologia de manera responsable."'},
+]},
+{id:'travel_blog',type:'Travel Blog',icon:'✈️',contextEng:'You read the following post on a Spanish travel blog.',
+text:`MI VIAJE POR ANDALUCIA
+Por: Carmen Ruiz | 22 de agosto
+ 
+Acabo de regresar de un viaje increible
+por Andalucia y quiero compartir mis
+experiencias con vosotros.
+ 
+Llegue a Sevilla el lunes por la tarde.
+Lo primero que hice fue visitar la
+Catedral, que es la tercera mas grande
+del mundo. Al dia siguiente, visite el
+Barrio de Santa Cruz, el antiguo barrio
+judio, con sus calles estrechas y sus
+jardines llenos de flores.
+ 
+Desde Sevilla, tome un tren a Granada.
+La Alhambra me dejo sin palabras - es
+uno de los monumentos mas impresionantes
+que he visto en mi vida. Si alguna vez
+visitais Andalucia, reservad las entradas
+con mucha antelacion porque se agotan
+rapidamente.
+ 
+El viaje duro diez dias en total y gaste
+aproximadamente 800 euros incluyendo
+el transporte y el alojamiento.`,
+questions:[
+{q:'What is notable about the Cathedral in Seville?',opts:['It is the oldest in Spain','It is the third largest in the world','It was built by the Moors','It contains famous paintings'],ans:1,exp:'"la Catedral, que es la tercera mas grande del mundo" — the Cathedral is the third largest in the world.'},
+{q:'What advice does Carmen give about the Alhambra?',opts:['Visit early in the morning','Hire a local guide','Book tickets well in advance','Avoid visiting in summer'],ans:2,exp:'Carmen recommends "reservad las entradas con mucha antelacion porque se agotan rapidamente" — book tickets in advance because they sell out quickly.'},
+{q:'How much did Carmen spend on the trip in total?',opts:['600 euros','800 euros','1000 euros','1200 euros'],ans:1,exp:'"gaste aproximadamente 800 euros incluyendo el transporte y el alojamiento" — she spent approximately 800 euros including transport and accommodation.'},
+]},
+{id:'literary_excerpt',type:'Short Story Excerpt',icon:'📚',contextEng:'You read the following excerpt from a short story by a contemporary Spanish author.',
+text:`EL VIEJO CAFE
+(Fragmento)
+ 
+Todos los martes, don Aurelio llegaba
+al cafe exactamente a las cuatro de la
+tarde. Se sentaba siempre en la misma
+mesa, junto a la ventana, y pedia un
+cafe solo y un vaso de agua.
+ 
+El camarero, que se llamaba Miguel, ya
+sabia lo que iba a pedir antes de que
+don Aurelio abriera la boca. Durante
+veinte anos, esta rutina no habia
+cambiado nunca.
+ 
+Aquella tarde de noviembre, sin embargo,
+algo era diferente. Don Aurelio llego
+cinco minutos tarde y se sento en una
+mesa diferente, en el centro del salon.
+Miguel lo miro con sorpresa.
+ 
+"Hoy es un dia especial", explico el
+viejo, sonriendo misteriosamente.
+"Hoy cumplo ochenta anos."`,
+questions:[
+{q:'What time did don Aurelio always arrive at the cafe?',opts:['At three in the afternoon','At four in the afternoon','At five in the afternoon','At noon'],ans:1,exp:'"don Aurelio llegaba al cafe exactamente a las cuatro de la tarde" — he arrived exactly at four in the afternoon.'},
+{q:'How long had this routine continued without change?',opts:['Ten years','Fifteen years','Twenty years','Thirty years'],ans:2,exp:'"Durante veinte anos, esta rutina no habia cambiado nunca" — for twenty years this routine had never changed.'},
+{q:'Why was that particular Tuesday different?',opts:['Don Aurelio was ill','The cafe was closed','Don Aurelio arrived late and sat at a different table','Miguel was not working'],ans:2,exp:'Don Aurelio arrived five minutes late ("llego cinco minutos tarde") and sat at a different table ("se sento en una mesa diferente").'},
+]},
+{id:'formal_letter',type:'Formal Letter',icon:'📬',contextEng:'You read the following letter of complaint sent to a Spanish newspaper.',
+text:`Estimado director:
+ 
+Le escribo para expresar mi preocupacion
+por la situacion del parque central de
+nuestra ciudad, que se ha deteriorado
+considerablemente en los ultimos dos anos.
+ 
+Anteriormente, el parque contaba con
+zonas verdes bien mantenidas, fuentes
+en funcionamiento y zonas de juego para
+los ninos en buen estado. Sin embargo,
+en la actualidad, las fuentes estan
+rotas, los bancos deteriorados y la
+hierba sin cortar desde hace meses.
+ 
+Muchos vecinos hemos intentado contactar
+con el ayuntamiento en varias ocasiones,
+pero nuestras quejas no han recibido
+respuesta alguna.
+ 
+Por lo tanto, le pido que publique esta
+carta para hacer publica esta situacion
+y presionar a las autoridades locales
+para que actuen con urgencia.
+ 
+Atentamente,
+Un ciudadano preocupado`,
+questions:[
+{q:'What is the main concern expressed in this letter?',opts:['Traffic problems in the city','The deterioration of the central park','Lack of public transportation','Problems with local schools'],ans:1,exp:'The letter describes "la situacion del parque central de nuestra ciudad, que se ha deteriorado considerablemente."'},
+{q:'What was the park like before?',opts:['It had no fountains','It was always closed','It had well-maintained green areas and working fountains','It was only for adults'],ans:2,exp:'The letter says the park previously had "zonas verdes bien mantenidas, fuentes en funcionamiento y zonas de juego para los ninos en buen estado."'},
+{q:'Why is the writer asking the newspaper to publish the letter?',opts:['To find the park designer','To advertise a petition','To make the situation public and pressure authorities to act','To get donations for park repair'],ans:2,exp:'The writer asks for publication "para hacer publica esta situacion y presionar a las autoridades locales para que actuen con urgencia."'},
+]},
+{id:'advertisement2',type:'Cultural Program',icon:'🎭',contextEng:'You see the following program announcement at a Spanish theater.',
+text:`TEATRO NACIONAL
+TEMPORADA 2024-2025
+ 
+ESTRENO DE TEMPORADA:
+"Las Meninas" de Antonio Buero Vallejo
+Adaptacion moderna del clasico de 1960
+ 
+Funcion: Viernes, sabados y domingos
+Horario: 19:30 y 22:00
+Sala Principal - 450 asientos
+ 
+PROXIMAS FUNCIONES:
+1-15 diciembre: "Don Juan Tenorio"
+16-31 diciembre: "La casa de Bernarda Alba"
+Enero-febrero: "Bodas de sangre"
+ 
+PRECIOS:
+Entrada general ..... 25 euros
+Estudiantes y mayores de 65 ... 15 euros
+Grupos de mas de 10 personas .. 20 euros
+ 
+RESERVAS:
+www.teatronacional.es
+Tel: 91-234-5678
+Taquilla: lunes a viernes 10:00-20:00`,
+questions:[
+{q:'On which days are performances of "Las Meninas" scheduled?',opts:['Monday, Wednesday, Friday','Tuesday, Thursday, Saturday','Friday, Saturday, Sunday','Every day of the week'],ans:2,exp:'The program states "Funcion: Viernes, sabados y domingos" — Friday, Saturday, and Sunday.'},
+{q:'What is the ticket price for students?',opts:['25 euros','20 euros','15 euros','10 euros'],ans:2,exp:'Students (Estudiantes) pay 15 euros according to the price list.'},
+{q:'Which play is scheduled for January and February?',opts:['Las Meninas','Don Juan Tenorio','La casa de Bernarda Alba','Bodas de sangre'],ans:3,exp:'The program shows "Enero-febrero: Bodas de sangre" — January-February features Bodas de sangre.'},
+]},
+{id:'science_article',type:'Science Article',icon:'🔬',contextEng:'You read the following article in a Spanish science magazine for students.',
+text:`EL SISTEMA SOLAR: LO QUE SABEMOS HOY
+ 
+Durante siglos, los seres humanos han
+mirado al cielo y se han preguntado que
+habia mas alla de nuestro planeta. Hoy,
+gracias a la tecnologia espacial, sabemos
+mucho mas que nuestros antepasados.
+ 
+Nuestro sistema solar tiene ocho planetas
+que orbitan alrededor del sol. El planeta
+mas grande es Jupiter, que es tan grande
+que todos los demas planetas podrian
+caber dentro de el. El mas pequeno es
+Mercurio, que tambien es el mas cercano
+al sol.
+ 
+En los ultimos anos, los cientificos han
+descubierto que existe agua liquida bajo
+la superficie helada de algunos satelites
+de Jupiter y Saturno. Este descubrimiento
+es muy importante porque el agua es
+fundamental para la existencia de vida.
+ 
+La Agencia Espacial Europea y la NASA
+colaboran actualmente en varios proyectos
+para explorar estos mundos distantes.`,
+questions:[
+{q:'How many planets are in our solar system according to the article?',opts:['Seven','Eight','Nine','Ten'],ans:1,exp:'The article states "Nuestro sistema solar tiene ocho planetas" — our solar system has eight planets.'},
+{q:'What makes the discovery of liquid water on Jupiter and Saturn moons significant?',opts:['It confirms alien life exists','Water is fundamental for life to exist','It means we can travel there','The water can be used for fuel'],ans:1,exp:'"el agua es fundamental para la existencia de vida" — water is fundamental for the existence of life.'},
+{q:'Which organizations are currently collaborating to explore distant worlds?',opts:['NASA and Russia','The European Space Agency and NASA','NASA and China','ESA and Japan'],ans:1,exp:'La Agencia Espacial Europea y la NASA colaboran actualmente en varios proyectos.'},
+]},
+{id:'recipe2',type:'Recipe & Culture',icon:'🥘',contextEng:'You read the following article about a traditional Spanish dish.',
+text:`EL COCIDO MADRILENO:
+UN PLATO CON HISTORIA
+ 
+El cocido madrileno es uno de los platos
+mas tradicionales de la cocina espanola.
+Este guiso contiene garbanzos, verduras
+y diferentes tipos de carne, incluyendo
+chorizo, morcilla y tocino.
+ 
+Segun los historiadores, el origen del
+cocido se remonta al siglo XVI, cuando
+era un plato humilde que cocinaban las
+familias mas pobres de Madrid. Con el
+tiempo, se fue enriqueciendo con mas
+ingredientes y se convirtio en un plato
+popular en todos los niveles sociales.
+ 
+La forma tradicional de servirlo es en
+tres vuelcos: primero la sopa, luego
+las verduras con los garbanzos, y
+finalmente las carnes. Un buen cocido
+necesita cocinarse lentamente durante
+al menos tres horas.
+ 
+Hoy en dia, se puede encontrar cocido
+madrileno en los mejores restaurantes
+de Madrid, especialmente en invierno.`,
+questions:[
+{q:'What are the main ingredients of cocido madrileno?',opts:['Rice, fish, and vegetables','Chickpeas, vegetables, and different meats','Pasta, tomatoes, and beef','Potatoes, eggs, and onion'],ans:1,exp:'"Este guiso contiene garbanzos, verduras y diferentes tipos de carne, incluyendo chorizo, morcilla y tocino."'},
+{q:'What was the original social status of cocido in the 16th century?',opts:['It was a royal dish','It was a dish for the wealthy','It was a humble dish for poor families','It was eaten only at celebrations'],ans:2,exp:'The article says "era un plato humilde que cocinaban las familias mas pobres de Madrid" — it was a humble dish cooked by the poorest families.'},
+{q:'How is cocido traditionally served?',opts:['All together on one large plate','In two courses: soup then meat','In three courses: soup, vegetables/chickpeas, then meat','Cold as a salad'],ans:2,exp:'It is served "en tres vuelcos: primero la sopa, luego las verduras con los garbanzos, y finalmente las carnes."'},
+]},
+];
+ 
+function loadMastery(){try{return JSON.parse(localStorage.getItem('nsa3_mastery')||'{}');}catch{return{};}}
+function saveMastery(m){try{localStorage.setItem('nsa3_mastery',JSON.stringify(m));}catch{}}
+function getWordStatus(topicId,word){const m=loadMastery();const d=m[topicId]?.[word];if(!d||d.correct===0)return'new';const u=new Set(d.sessions||[]).size;if(d.correct>=3&&u>=2)return'mastered';if(d.correct>=3)return'familiar';return'learning';}
+function recordAnswer(topicId,word,correct,sessionDate){const m=loadMastery();if(!m[topicId])m[topicId]={};if(!m[topicId][word])m[topicId][word]={correct:0,wrong:0,sessions:[]};if(correct){m[topicId][word].correct++;if(!m[topicId][word].sessions.includes(sessionDate))m[topicId][word].sessions.push(sessionDate);}else m[topicId][word].wrong=(m[topicId][word].wrong||0)+1;saveMastery(m);}
+function getTopicStats(id,keys){const c={new:0,learning:0,familiar:0,mastered:0};keys.forEach(k=>c[getWordStatus(id,k)]++);return c;}
+function getTopicBadge(id,keys){const s=getTopicStats(id,keys),t=keys.length;if(s.mastered===t)return{label:'Mastered',cls:'badge-mastered'};if(s.mastered>0||s.familiar>0)return{label:'In progress',cls:'badge-learning'};return{label:'New',cls:'badge-new'};}
+ 
+const ACT=['multiple-choice','audio-to-word','matching','listen-match','fill-blank','multiple-choice'];
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function pickWords(t,n=6){const g={new:[],learning:[],familiar:[],mastered:[]};t.words.forEach(w=>g[getWordStatus(t.id,w[0])].push(w));return[...g.new,...g.learning,...g.familiar,...g.mastered].slice(0,n);}
+function buildVocabSession(t){const words=pickWords(t,Math.min(t.words.length,8));return words.map((w,i)=>buildActivity(ACT[i%ACT.length],w,t));}
+function buildActivity(type,word,topic){
+  const[sp,en]=word;const dist=topic.words.filter(w=>w[0]!==sp).sort(()=>Math.random()-.5).slice(0,3);
+  if(type==='multiple-choice'){const opts=shuffle([en,...dist.map(d=>d[1])]);return{type,word:sp,answer:en,question:`What does "${sp}" mean?`,options:opts,correct:opts.indexOf(en),actLabel:'Multiple Choice'};}
+  if(type==='audio-to-word'){const opts=shuffle([en,...dist.map(d=>d[1])]);return{type,word:sp,answer:en,question:'Listen and choose the correct meaning.',options:opts,correct:opts.indexOf(en),actLabel:'Listen & Choose'};}
+  if(type==='fill-blank'){return{type,word:sp,answer:sp,question:`Translate to Spanish: "${en}"`,actLabel:'Fill in the Blank'};}
+  if(type==='matching'||type==='listen-match'){const pairs=shuffle([word,...dist.slice(0,3)]).slice(0,4);return{type:'matching',listenMode:type==='listen-match',word:sp,pairs,actLabel:type==='listen-match'?'Listen & Match':'Read & Match'};}
+  const opts=shuffle([en,...dist.map(d=>d[1])]);return{type:'multiple-choice',word:sp,answer:en,question:`What does "${sp}" mean?`,options:opts,correct:opts.indexOf(en),actLabel:'Multiple Choice'};
+}
+function buildGrammarSession(t){const g={new:[],learning:[],familiar:[],mastered:[]};t.questions.forEach(q=>g[getWordStatus(t.id,q.q)].push(q));return shuffle([...g.new,...g.learning,...g.familiar,...g.mastered]).slice(0,8).map(q=>({type:'grammar-mc',word:q.q,question:q.q,options:q.opts,correct:q.ans,explanation:q.exp,actLabel:'Grammar in Action',isGrammar:true}));}
+ 
+let S={screen:'home',mode:'vocab',topicId:null,activities:[],current:0,sessionCorrect:0,sessionDate:todayStr(),answered:false,chosen:null,fillValue:'',matchLeft:null,matchRight:null,matchedPairs:[],wrongFlash:null,readingPassage:null,readingQ:0,readingScore:0,readingAnswered:false,readingChosen:null};
+ 
+function getSpanishVoices(){return window.speechSynthesis.getVoices().filter(v=>v.lang.startsWith('es')).sort((a,b)=>a.name.localeCompare(b.name));}
+function getSavedVoice(){const saved=localStorage.getItem('nsa_voice');const voices=getSpanishVoices();if(saved){const v=voices.find(v=>v.name===saved);if(v)return v;}return voices.find(v=>/Monica|Jorge|Paulina|Diego/i.test(v.name))||voices[0]||null;}
+function getSavedRate(){return parseFloat(localStorage.getItem('nsa_rate')||'0.85');}
+function speak(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=getSavedRate();u.pitch=1;const v=getSavedVoice();if(v)u.voice=v;window.speechSynthesis.speak(u);}
+window.speechSynthesis&&window.speechSynthesis.getVoices();
+window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+ 
+function render(){const app=document.getElementById('app');const screens={home:homeHTML,concept:conceptHTML,reading:readingHTML,session:sessionHTML,result:resultHTML,progress:progressHTML,settings:settingsHTML};(screens[S.screen]||homeHTML)().then?null:(app.innerHTML=(screens[S.screen]||homeHTML)());bind();}
+ 
+const hdr=a=>`<div class="header"><div class="header-left"><span class="h-title">Practica</span><span class="h-sub">Nivel Tres · Spanish 3</span></div><div class="h-nav"><button class="nav-btn${a==='home'?' active':''}" id="nav-home">Inicio</button><button class="nav-btn${a==='progress'?' active':''}" id="nav-prog">Progreso</button><button class="nav-btn${a==='settings'?' active':''}" id="nav-set">&#9881; Voz</button></div></div>`;
+ 
+function homeHTML(){
+  const tV=VOCAB_TOPICS.reduce((a,t)=>a+t.words.length,0),mV=VOCAB_TOPICS.reduce((a,t)=>a+t.words.filter(([w])=>getWordStatus(t.id,w)==='mastered').length,0);
+  const tG=GRAMMAR_TOPICS.reduce((a,t)=>a+t.questions.length,0),mG=GRAMMAR_TOPICS.reduce((a,t)=>a+t.questions.filter(q=>getWordStatus(t.id,q.q)==='mastered').length,0);
+  const tR=READING_PASSAGES.reduce((a,p)=>a+p.questions.length,0),mR=READING_PASSAGES.reduce((a,p)=>a+p.questions.filter(q=>getWordStatus('r3_'+p.id,q.q)==='mastered').length,0);
+  const total=tV+tG+tR,mast=mV+mG+mR;
+  return hdr('home')+`<div class="main">
+  <div class="intro" style="margin-bottom:16px"><h2>Que quieres practicar?</h2><p>NSA Level 3 — Intermediate Low. Vocabulary, grammar, and authentic reading practice with mastery tracking.</p></div>
+  <div class="stats-bar"><div><div class="stats-big">${mast}</div><div class="stats-sub">mastered of ${total} total</div></div>
+  <div style="flex:1"><div style="height:7px;background:var(--cream-dark);border-radius:4px;overflow:hidden;margin-bottom:8px"><div style="height:7px;background:var(--correct);border-radius:4px;width:${total?Math.round(mast/total*100):0}%"></div></div>
+  <div class="mastery-legend"><span class="legend-item"><span class="legend-dot" style="background:var(--new)"></span>New</span><span class="legend-item"><span class="legend-dot" style="background:var(--learning)"></span>Learning</span><span class="legend-item"><span class="legend-dot" style="background:var(--familiar)"></span>Familiar</span><span class="legend-item"><span class="legend-dot" style="background:var(--mastered)"></span>Mastered</span></div></div></div>
+  <div class="section-header"><div class="section-header-title" style="color:var(--gold)">Vocabulary</div><div class="section-header-line"></div><div style="font-size:11px;color:var(--muted)">${mV}/${tV}</div></div>
+  <div class="topic-grid">${VOCAB_TOPICS.map(t=>{const b=getTopicBadge(t.id,t.words.map(w=>w[0]));return`<div class="topic-card" data-topic="${t.id}" data-mode="vocab"><div class="topic-badge ${b.cls}">${b.label}</div><div class="topic-icon">${t.icon}</div><div class="topic-name">${t.label}</div><div class="topic-count">${t.words.length} words</div><div class="topic-mastery">${t.words.slice(0,10).map(([w])=>`<div class="mastery-pip ${getWordStatus(t.id,w)}"></div>`).join('')}</div></div>`;}).join('')}</div>
+  <div class="section-header" style="margin-top:24px"><div class="section-header-title" style="color:#1B6BB5">Reading</div><div class="section-header-line"></div><div style="font-size:11px;color:var(--muted)">${mR}/${tR}</div></div>
+  <div class="topic-grid">${READING_PASSAGES.map(p=>{const keys=p.questions.map(q=>q.q);const b=getTopicBadge('r3_'+p.id,keys);return`<div class="topic-card" style="border-color:#D8E8F0" data-topic="${p.id}" data-mode="reading" onmouseover="this.style.borderColor='#1B6BB5'" onmouseout="this.style.borderColor='#D8E8F0'"><div class="topic-badge ${b.cls}">${b.label==='New'?'Reading':b.label}</div><div class="topic-icon">${p.icon}</div><div class="topic-name">${p.type}</div><div class="topic-count">${p.questions.length} questions</div><div class="topic-mastery">${keys.map(k=>`<div class="mastery-pip ${getWordStatus('r3_'+p.id,k)}"></div>`).join('')}</div></div>`;}).join('')}</div>
+  <div class="section-header" style="margin-top:24px"><div class="section-header-title grammar">Grammar</div><div class="section-header-line"></div><div style="font-size:11px;color:var(--muted)">${mG}/${tG}</div></div>
+  <div class="topic-grid">${GRAMMAR_TOPICS.map(t=>{const keys=t.questions.map(q=>q.q);const b=getTopicBadge(t.id,keys);const bc=b.label==='New'?'badge-grammar':b.cls;return`<div class="topic-card grammar-card" data-topic="${t.id}" data-mode="grammar"><div class="topic-badge ${bc}">${b.label==='New'?'Grammar':b.label}</div><div class="topic-icon">${t.icon}</div><div class="topic-name">${t.label}</div><div class="topic-count">${t.questions.length} questions</div><div class="topic-mastery">${keys.slice(0,8).map(k=>`<div class="mastery-pip ${getWordStatus(t.id,k)}"></div>`).join('')}</div></div>`;}).join('')}</div>
+  </div>`;
+}
+ 
+function sessionHTML(){
+  const act=S.activities[S.current];const pct=Math.round((S.current/S.activities.length)*100);
+  const topic=S.mode==='vocab'?VOCAB_TOPICS.find(t=>t.id===S.topicId):GRAMMAR_TOPICS.find(t=>t.id===S.topicId);
+  let body='';
+  if(act.type==='grammar-mc'||act.type==='multiple-choice')body=mcHTML(act);
+  else if(act.type==='audio-to-word')body=audioHTML(act);
+  else if(act.type==='fill-blank')body=fillHTML(act);
+  else if(act.type==='matching')body=matchHTML(act);
+  return`${hdr('home')}<div class="activity-header"><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><span class="strip-info">${topic.icon} ${topic.label}</span><span class="strip-score">${S.sessionCorrect}&#10003; ${S.current+1}/${S.activities.length}</span></div>
+  <div class="main"><div class="activity-type-badge${act.isGrammar?' grammar-badge':''}">${act.isGrammar?'&#9999;':act.type==='audio-to-word'?'&#128266;':act.type==='matching'?act.listenMode?'&#128266;':'&#128279;':'&#9997;'} ${act.actLabel}</div>${body}</div>`;
+}
+ 
+const L=['A','B','C','D'];
+function mcHTML(act){return`<div class="q-text">${act.question}</div><div class="options-grid">${act.options.map((opt,i)=>{let cls='';if(S.answered){if(i===act.correct)cls='correct';else if(i===S.chosen&&i!==act.correct)cls='wrong';}return`<button class="option ${cls}" data-opt="${i}" ${S.answered?'disabled':''}><span class="opt-letter">${L[i]}</span>${opt}</button>`;}).join('')}</div>${fbHTML(act)}`;}
+function audioHTML(act){return`<div class="audio-prompt" id="audio-btn" data-speak="${act.word}"><div class="audio-icon">&#128266;</div><div class="audio-word">${act.word}</div><div class="audio-hint">Tap to hear</div></div><div class="q-text" style="font-size:15px">${act.question}</div><div class="options-grid two-col">${act.options.map((opt,i)=>{let cls='';if(S.answered){if(i===act.correct)cls='correct';else if(i===S.chosen&&i!==act.correct)cls='wrong';}return`<button class="option ${cls}" data-opt="${i}" ${S.answered?'disabled':''}><span class="opt-letter">${L[i]}</span>${opt}</button>`;}).join('')}</div>${fbHTML(act)}`;}
+function fillHTML(act){let cls='';if(S.answered){const ok=S.fillValue.trim().toLowerCase()===act.answer.toLowerCase();cls=ok?'correct':'wrong';}return`<div class="q-text">${act.question}</div><input class="blank-input ${cls}" id="fill-input" type="text" placeholder="Type in Spanish..." value="${S.fillValue}" ${S.answered?'disabled':''}/>
+${!S.answered?`<button class="submit-btn" id="fill-submit">Check</button>`:''}${S.answered?fillFbHTML(act):''}`;}
+function fillFbHTML(act){const ok=S.fillValue.trim().toLowerCase()===act.answer.toLowerCase();return`<div class="feedback ${ok?'correct-fb':'wrong-fb'}"><strong>${ok?'Correcto!':'Not quite.'}</strong>${ok?'':` The answer is <strong>${act.answer}</strong>.`}</div><button class="next-btn" id="next-btn">${S.current<S.activities.length-1?'Siguiente':'Ver resultados'}</button>`;}
+function matchHTML(act){
+  const pairs=act.pairs;const lw=pairs.map(p=>p[0]);
+  if(!act._rw)act._rw=shuffle(pairs.map(p=>p[1]));if(!act._heard)act._heard={};
+  const rw=act._rw;const lm=act.listenMode;
+  return`<div class="q-text" style="font-size:15px">${lm?'Tap to hear, then match to English.':'Match each Spanish word to its English meaning.'}</div>
+  <div class="match-progress">${S.matchedPairs.length} / ${pairs.length} matched</div>
+  <div class="match-grid"><div><div class="match-col-label">${lm?'Tap to hear':'Espanol'}</div>
+  ${lw.map((w,i)=>{const im=S.matchedPairs.some(mp=>mp[0]===i),is=S.matchLeft===i,iw=S.wrongFlash==='L'+i;
+    if(lm){const h=act._heard[i];return`<div class="match-card${im?' matched':is?' selected':iw?' wrong-flash':''}" data-left="${i}" data-speak="${w}" style="margin-bottom:7px;flex-direction:column;gap:4px;padding:10px 8px;min-height:60px">${im?`<span>&#10003;</span><span style="font-size:11px;color:var(--correct)">${w}</span>`:`<span style="font-size:22px">${h?'&#128266;':'&#128264;'}</span><span style="font-size:10px;color:${is?'var(--navy)':'var(--muted)'}">${h?'replay':'tap to hear'}</span>`}</div>`;}
+    return`<div class="match-card${im?' matched':is?' selected':iw?' wrong-flash':''}" data-left="${i}" style="margin-bottom:7px">${w}</div>`;
+  }).join('')}</div>
+  <div><div class="match-col-label">English</div>${rw.map((w,i)=>{const im=S.matchedPairs.some(mp=>mp[1]===i),is=S.matchRight===i,iw=S.wrongFlash==='R'+i;return`<div class="match-card${im?' matched':is?' selected':iw?' wrong-flash':''}" data-right="${i}" style="margin-bottom:7px">${w}</div>`;}).join('')}</div></div>
+  ${S.matchedPairs.length===pairs.length?`<div class="feedback correct-fb"><strong>Perfecto!</strong></div><button class="next-btn" id="next-btn">${S.current<S.activities.length-1?'Siguiente':'Ver resultados'}</button>`:''}`;}
+function fbHTML(act){if(!S.answered)return'';const ok=S.chosen===act.correct;return`<div class="feedback ${ok?'correct-fb':'wrong-fb'}"><strong>${ok?'Correcto!':'Not quite.'}</strong>${ok?'':` The answer is <strong>${act.options?act.options[act.correct]:act.answer}</strong>.`}${act.explanation?`<br><span style="margin-top:4px;display:block">${act.explanation}</span>`:''}</div><button class="next-btn" id="next-btn">${S.current<S.activities.length-1?'Siguiente':'Ver resultados'}</button>`;}
+ 
+function resultHTML(){
+  const total=S.activities.length,pct=Math.round((S.sessionCorrect/total)*100);
+  const msg=pct>=80?'Excelente!':pct>=60?'Buen trabajo!':'Sigue practicando!';
+  const topic=S.mode==='vocab'?VOCAB_TOPICS.find(t=>t.id===S.topicId):GRAMMAR_TOPICS.find(t=>t.id===S.topicId);
+  const keys=S.mode==='vocab'?topic.words.map(w=>w[0]):topic.questions.map(q=>q.q);
+  const stats=getTopicStats(S.topicId,keys);const color=pct>=80?'var(--correct)':pct>=60?'var(--gold)':'var(--wrong)';
+  return`${hdr('home')}<div class="result-header"><div class="result-score">${pct}<span>%</span></div><div class="result-msg">${msg} ${topic.icon} ${topic.label}</div></div>
+  <div class="main"><div class="stat-row"><div class="stat-cell"><div class="stat-val" style="color:var(--correct)">${S.sessionCorrect}</div><div class="stat-lbl">Correct</div></div><div class="stat-cell"><div class="stat-val" style="color:var(--wrong)">${total-S.sessionCorrect}</div><div class="stat-lbl">Incorrect</div></div><div class="stat-cell"><div class="stat-val" style="color:${color}">${pct}%</div><div class="stat-lbl">Score</div></div></div>
+  <div style="display:flex;gap:8px;margin-bottom:18px">${['new','learning','familiar','mastered'].map(s=>`<div style="flex:1;text-align:center;padding:10px 6px;background:var(--cream);border-radius:var(--rs)"><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--${s==='new'?'muted':s==='learning'?'gold':s==='familiar'?'familiar':'correct'})">${stats[s]}</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px">${s}</div></div>`).join('')}</div>
+  <button class="primary-btn" id="retry-btn"><span class="gold-bar"></span>Practice again</button>
+  <button class="secondary-btn" id="home-btn" style="margin-top:8px">Choose a different topic</button></div>`;}
+ 
+function progressHTML(){
+  return`${hdr('progress')}<div class="main"><div class="intro" style="margin-bottom:16px"><h2>Mi progreso</h2><p>Mastery = 3 correct answers across 2+ different sessions.</p></div>
+  <div class="section-header"><div class="section-header-title" style="color:var(--gold)">Vocabulary</div><div class="section-header-line"></div></div>
+  ${VOCAB_TOPICS.map(t=>{const s=getTopicStats(t.id,t.words.map(w=>w[0]));return`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:500;color:var(--navy)">${t.icon} ${t.label}</div><div style="font-size:11px;color:var(--muted)">${s.mastered}/${t.words.length}</div></div><div style="height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden;display:flex"><div style="width:${Math.round(s.mastered/t.words.length*100)}%;background:var(--correct)"></div><div style="width:${Math.round(s.familiar/t.words.length*100)}%;background:var(--familiar)"></div><div style="width:${Math.round(s.learning/t.words.length*100)}%;background:var(--gold)"></div></div></div>`;}).join('')}
+  <div class="section-header" style="margin-top:20px"><div class="section-header-title" style="color:#1B6BB5">Reading</div><div class="section-header-line"></div></div>
+  ${READING_PASSAGES.map(p=>{const keys=p.questions.map(q=>q.q);const s=getTopicStats('r3_'+p.id,keys);return`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:500;color:var(--navy)">${p.icon} ${p.type}</div><div style="font-size:11px;color:var(--muted)">${s.mastered}/${p.questions.length}</div></div><div style="height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden;display:flex"><div style="width:${Math.round(s.mastered/p.questions.length*100)}%;background:#1B6BB5"></div><div style="width:${Math.round(s.familiar/p.questions.length*100)}%;background:var(--familiar)"></div><div style="width:${Math.round(s.learning/p.questions.length*100)}%;background:var(--gold)"></div></div></div>`;}).join('')}
+  <div class="section-header" style="margin-top:20px"><div class="section-header-title grammar">Grammar</div><div class="section-header-line"></div></div>
+  ${GRAMMAR_TOPICS.map(t=>{const keys=t.questions.map(q=>q.q);const s=getTopicStats(t.id,keys);return`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:500;color:var(--navy)">${t.icon} ${t.label}</div><div style="font-size:11px;color:var(--muted)">${s.mastered}/${t.questions.length}</div></div><div style="height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden;display:flex"><div style="width:${Math.round(s.mastered/keys.length*100)}%;background:var(--mastered)"></div><div style="width:${Math.round(s.familiar/keys.length*100)}%;background:var(--familiar)"></div><div style="width:${Math.round(s.learning/keys.length*100)}%;background:var(--learning)"></div></div></div>`;}).join('')}
+  <button class="secondary-btn" id="clear-btn" style="margin-top:10px;border-color:#E8D4D4;color:var(--wrong)">Reset all progress</button></div>`;}
+ 
+function conceptHTML(){
+  const topic=GRAMMAR_TOPICS.find(t=>t.id===S.topicId);const concept=GRAMMAR_CONCEPTS[S.topicId];
+  if(!concept){startSession(S.topicId,S.mode);return'';}
+  return hdr('home')+`<div class="main">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:var(--grammar-light);border-radius:20px;padding:5px 14px;margin-bottom:16px"><span>${topic.icon}</span><span style="font-size:11px;font-weight:500;color:var(--grammar-accent);text-transform:uppercase">Grammar Concept</span></div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--navy);margin-bottom:10px">${concept.title}</h2>
+  <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:20px">${concept.summary}</p>
+  <div style="background:var(--cream);border-radius:var(--r);padding:16px 18px;margin-bottom:16px">
+    <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Examples</div>
+    ${concept.examples.map(([es,en])=>`<div style="margin-bottom:10px"><div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:2px">${es}</div>${en?`<div style="font-size:12px;color:var(--muted);font-style:italic">${en}</div>`:''}</div>`).join('')}
+  </div>
+  ${concept.tip?`<div style="background:var(--grammar-light);border-left:3px solid var(--grammar-accent);border-radius:var(--rs);padding:12px 14px;margin-bottom:24px;font-size:13px;color:var(--navy);line-height:1.6"><strong style="color:var(--grammar-accent)">Tip:</strong> ${concept.tip}</div>`:''}
+  <button class="primary-btn" id="start-practice-btn"><span class="gold-bar"></span>Start practicing</button>
+  <button class="secondary-btn" id="skip-concept-btn" style="margin-top:8px">I already know this — skip</button></div>`;}
+ 
+function readingHTML(){
+  const p=S.readingPassage;if(!p){S.screen='home';render();return'';}
+  if(S.readingQ>=p.questions.length)return readingResultHTML(p);
+  const q=p.questions[S.readingQ];const pct=Math.round((S.readingQ/p.questions.length)*100);
+  return`${hdr('home')}<div class="activity-header"><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><span class="strip-info">${p.icon} ${p.type}</span><span class="strip-score">${S.readingScore}&#10003; ${S.readingQ+1}/${p.questions.length}</span></div>
+  <div class="main"><div class="activity-type-badge" style="background:#EBF3FC;color:#1B6BB5">&#128196; Reading Comprehension</div>
+  <div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:8px"><strong style="color:var(--navy);font-style:normal">Context:</strong> ${p.contextEng}</div>
+  <div style="background:var(--cream);border:1px solid #D8E8F0;border-left:3px solid #1B6BB5;border-radius:var(--rs);padding:14px 16px;margin-bottom:18px;font-family:monospace;font-size:13px;color:var(--navy);line-height:1.7;white-space:pre-wrap;overflow-x:auto">${p.text}</div>
+  <div class="q-text" style="font-size:16px">${q.q}</div>
+  <div class="options-grid">${q.opts.map((opt,i)=>{let cls='';if(S.readingAnswered){if(i===q.ans)cls='correct';else if(i===S.readingChosen&&i!==q.ans)cls='wrong';}return`<button class="option ${cls}" data-ropt="${i}" ${S.readingAnswered?'disabled':''}><span class="opt-letter">${L[i]}</span>${opt}</button>`;}).join('')}</div>
+  ${S.readingAnswered?`<div class="feedback ${S.readingChosen===q.ans?'correct-fb':'wrong-fb'}"><strong>${S.readingChosen===q.ans?'Correcto!':'Not quite.'}</strong>${S.readingChosen!==q.ans?` The answer is <strong>${q.opts[q.ans]}</strong>.`:''}<br><span style="margin-top:4px;display:block">${q.exp}</span></div><button class="next-btn" id="reading-next">${S.readingQ<p.questions.length-1?'Next question':'Ver resultados'}</button>`:''}
+  </div>`;}
+function readingResultHTML(p){const pct=Math.round((S.readingScore/p.questions.length)*100);const msg=pct>=80?'Excelente!':pct>=60?'Buen trabajo!':'Sigue practicando!';const color=pct>=80?'var(--correct)':pct>=60?'var(--gold)':'var(--wrong)';
+return`${hdr('home')}<div class="result-header"><div class="result-score">${pct}<span>%</span></div><div class="result-msg">${msg} ${p.icon} ${p.type}</div></div>
+<div class="main"><div class="stat-row"><div class="stat-cell"><div class="stat-val" style="color:var(--correct)">${S.readingScore}</div><div class="stat-lbl">Correct</div></div><div class="stat-cell"><div class="stat-val" style="color:var(--wrong)">${p.questions.length-S.readingScore}</div><div class="stat-lbl">Incorrect</div></div><div class="stat-cell"><div class="stat-val" style="color:${color}">${pct}%</div><div class="stat-lbl">Score</div></div></div>
+<button class="primary-btn" id="reading-retry"><span class="gold-bar"></span>Read again</button><button class="secondary-btn" id="home-btn" style="margin-top:8px">Choose a different topic</button></div>`;}
+ 
+function settingsHTML(){
+  const voices=getSpanishVoices();const savedVoice=localStorage.getItem('nsa_voice')||'';const savedRate=getSavedRate();
+  return`${hdr('settings')}<div class="main"><div class="intro" style="margin-bottom:18px"><h2>Voice Settings</h2><p>Choose the Spanish voice that sounds most natural on your device.</p></div>
+  ${voices.length===0?`<p style="color:var(--muted);font-size:13px">No Spanish voices found. Try Chrome or install a Spanish language pack.</p>`:
+  `<div style="font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:14px 0 8px">Spanish voices (${voices.length} found)</div>${voices.map(v=>{const isSel=savedVoice?v.name===savedVoice:v===getSavedVoice();const country=v.lang.split('-')[1]||'';const flag={ES:'&#127466;&#127480;',MX:'&#127474;&#127485;',US:'&#127482;&#127480;',AR:'&#127462;&#127479;',CO:'&#127464;&#127476;'}[country]||'&#127758;';return`<div class="voice-card${isSel?' selected':''}" data-voice="${v.name}" data-preview="Hola. Vamos a practicar espanol de nivel tres."><span style="font-size:20px">${flag}</span><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--navy)">${v.name}${isSel?' &#10003;':''}</div><div style="font-size:11px;color:var(--muted)">${v.lang}${v.localService?' on device':' online'}</div></div><span style="font-size:11px;padding:3px 8px;border-radius:10px;background:${isSel?'var(--gold)':'var(--cream-dark)'};color:${isSel?'#fff':'var(--muted)'};">${isSel?'Selected':'Tap to try'}</span></div>`;}).join('')}
+  <div style="font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:18px 0 8px">Speaking speed</div><div style="background:var(--cream);border-radius:var(--rs);padding:16px"><input id="rate-slider" type="range" min="0.6" max="1.15" step="0.05" value="${savedRate}" style="width:100%;accent-color:var(--gold);margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>Slow</span><span>Normal</span><span>Fast</span></div><div style="text-align:center;margin-top:10px"><button onclick="speak('Buenos dias. Vamos a practicar el espanol de nivel tres.')" style="padding:8px 18px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-family:inherit;font-size:13px;cursor:pointer">&#128266; Test</button></div></div>`}
+  </div>`;}
+ 
+function bind(){
+  document.getElementById('nav-home')?.addEventListener('click',()=>{S.screen='home';render();});
+  document.getElementById('nav-prog')?.addEventListener('click',()=>{S.screen='progress';render();});
+  document.getElementById('nav-set')?.addEventListener('click',()=>{S.screen='settings';render();});
+  document.querySelectorAll('[data-topic]').forEach(c=>c.addEventListener('click',()=>{
+    const mode=c.dataset.mode,topicId=c.dataset.topic;
+    if(mode==='grammar'){S.topicId=topicId;S.mode=mode;S.screen='concept';render();}
+    else if(mode==='reading'){S.topicId=topicId;S.mode='reading';S.screen='reading';S.readingPassage=READING_PASSAGES.find(p=>p.id===topicId);S.readingQ=0;S.readingScore=0;S.readingAnswered=false;S.readingChosen=null;render();}
+    else{startSession(topicId,mode);}
+  }));
+  document.getElementById('start-practice-btn')?.addEventListener('click',()=>startSession(S.topicId,S.mode));
+  document.getElementById('skip-concept-btn')?.addEventListener('click',()=>startSession(S.topicId,S.mode));
+  document.querySelectorAll('[data-opt]').forEach(b=>b.addEventListener('click',()=>answerMC(+b.dataset.opt)));
+  document.getElementById('audio-btn')?.addEventListener('click',function(){speak(this.dataset.speak);});
+  const fi=document.getElementById('fill-input');if(fi){fi.addEventListener('input',e=>{S.fillValue=e.target.value;});fi.addEventListener('keydown',e=>{if(e.key==='Enter')submitFill();});}
+  document.getElementById('fill-submit')?.addEventListener('click',submitFill);
+  document.querySelectorAll('[data-left]').forEach(c=>c.addEventListener('click',()=>{const act=S.activities[S.current];const i=+c.dataset.left;const word=act.listenMode?c.dataset.speak:act.pairs[i][0];if(word)speak(word);if(act.listenMode)act._heard[i]=true;matchSelectLeft(i);}));
+  document.querySelectorAll('[data-right]').forEach(c=>c.addEventListener('click',()=>matchSelectRight(+c.dataset.right)));
+  document.getElementById('next-btn')?.addEventListener('click',nextActivity);
+  document.getElementById('retry-btn')?.addEventListener('click',()=>startSession(S.topicId,S.mode));
+  document.getElementById('home-btn')?.addEventListener('click',()=>{S.screen='home';render();});
+  document.querySelectorAll('[data-ropt]').forEach(b=>b.addEventListener('click',()=>{if(S.readingAnswered)return;const i=+b.dataset.ropt;const p=S.readingPassage;const q=p.questions[S.readingQ];S.readingAnswered=true;S.readingChosen=i;if(i===q.ans){S.readingScore++;recordAnswer('r3_'+p.id,q.q,true,S.sessionDate);}else recordAnswer('r3_'+p.id,q.q,false,S.sessionDate);render();}));
+  document.getElementById('reading-next')?.addEventListener('click',()=>{S.readingQ++;S.readingAnswered=false;S.readingChosen=null;render();});
+  document.getElementById('reading-retry')?.addEventListener('click',()=>{S.readingQ=0;S.readingScore=0;S.readingAnswered=false;S.readingChosen=null;render();});
+  document.getElementById('clear-btn')?.addEventListener('click',()=>{if(confirm('Reset all Level 3 progress?')){localStorage.removeItem('nsa3_mastery');render();}});
+  document.querySelectorAll('[data-voice]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('nsa_voice',b.dataset.voice);speak(b.dataset.preview||'hola');render();}));
+  document.getElementById('rate-slider')?.addEventListener('input',e=>localStorage.setItem('nsa_rate',e.target.value));
+}
+ 
+function startSession(topicId,mode){
+  S.topicId=topicId;S.mode=mode;
+  S.activities=mode==='grammar'?buildGrammarSession(GRAMMAR_TOPICS.find(t=>t.id===topicId)):buildVocabSession(VOCAB_TOPICS.find(t=>t.id===topicId));
+  S.current=0;S.sessionCorrect=0;S.sessionDate=todayStr();S.answered=false;S.chosen=null;S.fillValue='';S.matchLeft=null;S.matchRight=null;S.matchedPairs=[];S.wrongFlash=null;
+  S.screen='session';render();
+  const act=S.activities[0];
+  if(act.type==='audio-to-word')setTimeout(()=>speak(act.word),400);
+  if(act.type==='matching'&&act.listenMode)setTimeout(()=>{speak(act.pairs[0][0]);act._heard[0]=true;render();},400);
+}
+function answerMC(i){if(S.answered)return;const act=S.activities[S.current];S.answered=true;S.chosen=i;const ok=i===act.correct;if(ok)S.sessionCorrect++;recordAnswer(S.topicId,act.word,ok,S.sessionDate);render();}
+function submitFill(){if(S.answered)return;const act=S.activities[S.current];S.answered=true;const ok=S.fillValue.trim().toLowerCase()===act.answer.toLowerCase();if(ok)S.sessionCorrect++;recordAnswer(S.topicId,act.word,ok,S.sessionDate);render();}
+function matchSelectLeft(i){const act=S.activities[S.current];if(S.matchedPairs.some(mp=>mp[0]===i))return;S.matchLeft=i;S.wrongFlash=null;if(S.matchRight!==null)tryMatch(act);else render();}
+function matchSelectRight(i){const act=S.activities[S.current];if(S.matchedPairs.some(mp=>mp[1]===i))return;S.matchRight=i;S.wrongFlash=null;if(S.matchLeft!==null)tryMatch(act);else render();}
+function tryMatch(act){const li=S.matchLeft,ri=S.matchRight;const lw=act.pairs[li][0];const rw=act._rw[ri];const ok=act.pairs.find(p=>p[0]===lw&&p[1]===rw);if(ok){S.matchedPairs.push([li,ri]);recordAnswer(S.topicId,lw,true,S.sessionDate);if(S.matchedPairs.length===act.pairs.length)S.sessionCorrect++;}else{recordAnswer(S.topicId,lw,false,S.sessionDate);S.wrongFlash='L'+li;setTimeout(()=>{S.wrongFlash=null;S.matchLeft=null;S.matchRight=null;render();},700);}S.matchLeft=null;S.matchRight=null;render();}
+function nextActivity(){if(S.current<S.activities.length-1){S.current++;S.answered=false;S.chosen=null;S.fillValue='';S.matchLeft=null;S.matchRight=null;S.matchedPairs=[];S.wrongFlash=null;render();const act=S.activities[S.current];if(act.type==='audio-to-word')setTimeout(()=>speak(act.word),400);if(act.type==='matching'&&act.listenMode)setTimeout(()=>{speak(act.pairs[0][0]);act._heard[0]=true;render();},400);}else{S.screen='result';render();}}
+ 
+render();
+</script>
+</body>
+</html>
+ 
